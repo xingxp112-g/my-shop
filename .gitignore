@@ -7,3 +7,5 @@ node_modules/
 .DS_Store
 frontend/h5/css/custom.css.map
 pic/
+backend/uploads/*
+!backend/uploads/.gitkeep
