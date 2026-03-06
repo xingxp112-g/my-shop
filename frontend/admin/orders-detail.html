@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>订单详情 - 美妆管理系统</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/custom.css" />
+  <style>
+    :root {
+      --color-primary:        #C4845A;
+      --color-primary-light:  #D9A882;
+      --color-primary-dark:   #A8694A;
+      --color-primary-muted:  #F0D5C5;
+      --color-accent:         #E8C9A8;
+      --color-gold:           #BFA080;
+      --color-bg-base:        #FDFAF8;
+      --color-bg-warm:        #F5EDE8;
+      --color-bg-section:     #FAF6F3;
+      --color-bg-overlay:     rgba(196,132,90,0.06);
+      --color-text-primary:   #2C2320;
+      --color-text-secondary: #6B5E58;
+      --color-text-muted:     #A89690;
+      --color-text-on-primary:#FDFAF8;
+      --color-text-link:      #C4845A;
+      --color-border-light:   #EDE3DC;
+      --color-border-medium:  #D9CBBE;
+      --color-border-focus:   #C4845A;
+      --color-success:        #7BAF8A;
+      --color-success-bg:     #EEF5F0;
+      --color-warning:        #C9935A;
+      --color-warning-bg:     #FBF2EA;
+      --color-danger:         #B86A6A;
+      --color-danger-bg:      #F7EDED;
+      --color-info:           #7A9BB5;
+      --color-info-bg:        #EEF3F8;
+      --shadow-xs:  0 1px 2px rgba(44,35,32,0.05);
+      --shadow-sm:  0 2px 8px rgba(44,35,32,0.07);
+      --shadow-md:  0 4px 16px rgba(44,35,32,0.10);
+      --shadow-lg:  0 8px 32px rgba(44,35,32,0.12);
+      --shadow-nav: 0 1px 0 #EDE3DC;
+      --font-display: 'Cormorant Garamond', 'SimSun', serif;
+      --font-body:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --duration-fast:   150ms;
+      --duration-normal: 250ms;
+      --duration-slow:   400ms;
+      --ease-out:        cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-in-out:     cubic-bezier(0.4, 0, 0.6, 1);
+      --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    * { font-family: var(--font-body); }
+
+    body {
+      background-color: var(--color-bg-base);
+      color: var(--color-text-primary);
+    }
+
+    /* ── 侧边栏 ── */
+    .sidebar {
+      width: 220px;
+      background: #2C2320;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-logo {
+      height: 64px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 1px solid rgba(253,250,248,0.08);
+    }
+    .sidebar-logo-sub {
+      font-size: 10px;
+      color: rgba(253,250,248,0.45);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .sidebar-logo-name {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--color-gold);
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    .sidebar-nav { flex: 1; padding: 12px 8px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(253,250,248,0.75);
+      text-decoration: none;
+      margin-bottom: 2px;
+      transition: background var(--duration-fast) var(--ease-out),
+                  color var(--duration-fast) var(--ease-out);
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover { background: rgba(253,250,248,0.06); color: #FDFAF8; }
+    .nav-item.active {
+      background: rgba(196,132,90,0.18);
+      color: var(--color-primary-muted);
+      border-left-color: var(--color-primary);
+      font-weight: 500;
+    }
+    .sidebar-footer {
+      padding: 16px 16px;
+      border-top: 1px solid rgba(253,250,248,0.08);
+    }
+    .sidebar-user-name {
+      font-size: 11px;
+      color: rgba(253,250,248,0.45);
+      margin-bottom: 6px;
+    }
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: rgba(253,250,248,0.55);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+    .logout-btn:hover { color: #FDFAF8; }
+
+    /* ── Topbar ── */
+    .topbar {
+      height: 56px;
+      background: #fff;
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: var(--shadow-nav);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .topbar-back {
+      color: var(--color-text-muted);
+      transition: color var(--duration-fast) var(--ease-out);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    .topbar-back:hover { color: var(--color-text-primary); }
+    .topbar-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    /* ── 内容卡片 ── */
+    .detail-card {
+      background: #fff;
+      border: 1px solid var(--color-border-light);
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(44,35,32,0.06);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .card-section-title {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 14px 24px 13px;
+      border-bottom: 1px solid var(--color-border-light);
+      background: var(--color-bg-section);
+    }
+    .card-body { padding: 20px 24px; }
+    .info-label { font-size: 11px; color: var(--color-text-muted); margin-bottom: 4px; }
+    .info-value { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+    .info-value-sec { font-size: 13px; color: var(--color-text-secondary); }
+
+    /* ── 明细表格 4.6 规范 ── */
+    .detail-table { width: 100%; border-collapse: collapse; }
+    .detail-table thead tr {
+      background: var(--color-bg-section);
+      border-bottom: 1.5px solid var(--color-border-light);
+    }
+    .detail-table th {
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+    }
+    .detail-table td {
+      padding: 13px 16px;
+      font-size: 13px;
+      color: var(--color-text-primary);
+      border-bottom: 1px solid #F2EAE5;
+      transition: background var(--duration-fast) var(--ease-out);
+    }
+    .detail-table tbody tr:last-child td { border-bottom: none; }
+    .detail-table tbody tr:hover td { background: var(--color-bg-section); }
+
+    /* ── 合计行 ── */
+    .total-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 16px;
+      border-top: 1px solid var(--color-border-light);
+    }
+    .total-label { font-size: 13px; color: var(--color-text-secondary); }
+    .total-amount {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--color-primary);
+    }
+
+    /* ── 状态徽章 4.3 规范 ── */
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 3px;
+    }
+    .badge-pending { background: var(--color-warning-bg); color: var(--color-warning); border: 1px solid rgba(201,147,90,0.25); }
+    .badge-confirm { background: var(--color-info-bg);    color: var(--color-info);    border: 1px solid rgba(122,155,181,0.25); }
+    .badge-done    { background: var(--color-success-bg); color: var(--color-success); border: 1px solid rgba(123,175,138,0.25); }
+    .badge-cancel  { background: var(--color-danger-bg);  color: var(--color-danger);  border: 1px solid rgba(184,106,106,0.25); }
+
+    /* ── 按钮 4.1 规范 ── */
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-text-on-primary);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 24px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(196,132,90,0.30);
+      transition: all var(--duration-normal) var(--ease-out);
+    }
+    .btn-primary:hover {
+      background: var(--color-primary-light);
+      box-shadow: 0 4px 12px rgba(196,132,90,0.40);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active { background: var(--color-primary-dark); transform: translateY(0) scale(0.98); }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--color-danger);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      border: 1.5px solid rgba(184,106,106,0.35);
+      border-radius: 4px;
+      padding: 9px 24px;
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-out);
+    }
+    .btn-danger:hover { background: var(--color-danger-bg); border-color: var(--color-danger); }
+    .btn-danger:active { transform: scale(0.98); }
+
+    /* ── 终态提示 ── */
+    .status-terminal {
+      background: var(--color-bg-section);
+      border: 1px solid var(--color-border-light);
+      border-radius: 6px;
+      padding: 18px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="flex h-screen">
+
+  <!-- ── 侧边栏 ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-sub">Admin</div>
+      <div class="sidebar-logo-name">美妆销售系统</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        首页
+      </a>
+      <a href="products.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        商品管理
+      </a>
+      <a href="brands.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+        品牌管理
+      </a>
+      <a href="tags.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+        标签管理
+      </a>
+      <a href="orders.html" class="nav-item active">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        订单管理
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user-name" id="sidebar-user"></div>
+      <button onclick="authLogout()" class="logout-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        退出登录
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── 主内容 ── -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <!-- 顶栏 -->
+    <header class="topbar">
+      <a href="orders.html" class="topbar-back">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </a>
+      <h1 id="page-title" class="topbar-title">订单详情</h1>
+      <span id="order-status-badge" style="margin-left: 8px;"></span>
+    </header>
+
+    <!-- 主体 -->
+    <main class="flex-1 overflow-auto" style="padding: 24px; background: var(--color-bg-base);">
+      <div id="order-content" style="max-width: 680px; margin: 0 auto;">
+        <div style="text-align: center; padding: 80px 0; color: var(--color-text-muted);">加载中...</div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 hidden"></div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  requireAuth();
+  document.getElementById('sidebar-user').textContent = getAdminUser();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderId   = urlParams.get('id');
+
+  const STATUS_BADGE = {
+    '待处理': 'badge badge-pending',
+    '已确认': 'badge badge-confirm',
+    '已完成': 'badge badge-done',
+    '已取消': 'badge badge-cancel',
+  };
+
+  // 状态流转规则（当前状态 -> 可操作按钮）
+  const STATUS_ACTIONS = {
+    '待处理': ['已确认', '已取消'],
+    '已确认': ['已完成', '已取消'],
+    '已完成': [],
+    '已取消': [],
+  };
+
+  function formatDate(isoStr) {
+    if (!isoStr) return '-';
+    const d = new Date(isoStr);
+    return d.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }) +
+      ' ' + d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+
+  let currentOrder = null;
+
+  async function loadOrder() {
+    if (!orderId) {
+      document.getElementById('order-content').innerHTML = `<div style="text-align:center;padding:80px 0;color:var(--color-danger);">订单 ID 缺失</div>`;
+      return;
+    }
+    try {
+      const order = await api.get(`/orders/${orderId}`);
+      currentOrder = order;
+      renderOrder(order);
+    } catch (err) {
+      document.getElementById('order-content').innerHTML = `<div style="text-align:center;padding:80px 0;color:var(--color-danger);">${err.message}</div>`;
+    }
+  }
+
+  function renderOrder(order) {
+    // 页面标题区域
+    document.getElementById('page-title').textContent = `订单 #${String(order.id).padStart(6, '0')}`;
+    const badgeCls = STATUS_BADGE[order.status] || 'badge badge-pending';
+    document.getElementById('order-status-badge').innerHTML = `<span class="${badgeCls}">${order.status}</span>`;
+
+    // 计算明细
+    const itemsHtml = order.items.map(item => {
+      const subtotal = (Number(item.price) * item.quantity).toFixed(2);
+      return `
+        <tr>
+          <td>${item.product?.name || '<span style="color:var(--color-text-muted)">已删除商品</span>'}</td>
+          <td style="text-align:right;color:var(--color-text-secondary);">¥${Number(item.price).toFixed(2)}</td>
+          <td style="text-align:right;color:var(--color-text-secondary);">${item.quantity}</td>
+          <td style="text-align:right;font-weight:500;">¥${subtotal}</td>
+        </tr>`;
+    }).join('');
+
+    // 状态操作按钮
+    const actions = STATUS_ACTIONS[order.status] || [];
+    const actionBtns = actions.map(s => {
+      const isDanger = s === '已取消';
+      const cls = isDanger ? 'btn-danger' : 'btn-primary';
+      return `<button onclick="updateStatus('${s}')" class="${cls}">${
+        s === '已确认' ? '确认订单' :
+        s === '已完成' ? '标记完成' : '取消订单'
+      }</button>`;
+    }).join('');
+
+    document.getElementById('order-content').innerHTML = `
+      <!-- 客户信息 -->
+      <div class="detail-card">
+        <div class="card-section-title">客户信息</div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px 32px;">
+            <div>
+              <div class="info-label">客户姓名</div>
+              <div class="info-value">${order.customer_name}</div>
+            </div>
+            <div>
+              <div class="info-label">联系方式</div>
+              <div class="info-value-sec">${order.phone}</div>
+            </div>
+            <div>
+              <div class="info-label">创建时间</div>
+              <div class="info-value-sec">${formatDate(order.created_at)}</div>
+            </div>
+            <div>
+              <div class="info-label">订单备注</div>
+              <div class="info-value-sec">${order.remark || '<span style="color:var(--color-text-muted)">无</span>'}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 商品明细 -->
+      <div class="detail-card">
+        <div class="card-section-title">商品明细</div>
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;">商品名称</th>
+              <th style="text-align:right;">单价</th>
+              <th style="text-align:right;">数量</th>
+              <th style="text-align:right;">小计</th>
+            </tr>
+          </thead>
+          <tbody>${itemsHtml}</tbody>
+        </table>
+        <div class="total-row">
+          <span class="total-label">订单总金额</span>
+          <span class="total-amount">¥${Number(order.total_amount).toFixed(2)}</span>
+        </div>
+      </div>
+
+      <!-- 状态操作 -->
+      ${actions.length > 0 ? `
+      <div class="detail-card">
+        <div class="card-section-title">变更状态</div>
+        <div class="card-body" style="display:flex;gap:12px;">${actionBtns}</div>
+      </div>` : `
+      <div class="status-terminal">订单已${order.status}，无可操作项</div>`}
+    `;
+  }
+
+  async function updateStatus(newStatus) {
+    const confirmMsg = newStatus === '已取消'
+      ? `确认取消订单 #${String(currentOrder.id).padStart(6, '0')}？`
+      : `确认将订单状态更新为「${newStatus}」？`;
+    if (!confirm(confirmMsg)) return;
+
+    try {
+      await api.patch(`/orders/${orderId}/status`, { status: newStatus });
+      showToast(`订单状态已更新为「${newStatus}」`);
+      loadOrder();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  loadOrder();
+</script>
+</body>
+</html>

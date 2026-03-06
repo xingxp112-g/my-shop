@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>商品编辑 - 美妆管理系统</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/custom.css" />
+  <style>
+    :root {
+      --color-primary:        #C4845A;
+      --color-primary-light:  #D9A882;
+      --color-primary-dark:   #A8694A;
+      --color-primary-muted:  #F0D5C5;
+      --color-accent:         #E8C9A8;
+      --color-gold:           #BFA080;
+      --color-bg-base:        #FDFAF8;
+      --color-bg-warm:        #F5EDE8;
+      --color-bg-section:     #FAF6F3;
+      --color-bg-overlay:     rgba(196,132,90,0.06);
+      --color-text-primary:   #2C2320;
+      --color-text-secondary: #6B5E58;
+      --color-text-muted:     #A89690;
+      --color-text-on-primary:#FDFAF8;
+      --color-text-link:      #C4845A;
+      --color-border-light:   #EDE3DC;
+      --color-border-medium:  #D9CBBE;
+      --color-border-focus:   #C4845A;
+      --color-success:        #7BAF8A;
+      --color-success-bg:     #EEF5F0;
+      --color-warning:        #C9935A;
+      --color-warning-bg:     #FBF2EA;
+      --color-danger:         #B86A6A;
+      --color-danger-bg:      #F7EDED;
+      --color-info:           #7A9BB5;
+      --color-info-bg:        #EEF3F8;
+      --shadow-xs:  0 1px 2px rgba(44,35,32,0.05);
+      --shadow-sm:  0 2px 8px rgba(44,35,32,0.07);
+      --shadow-md:  0 4px 16px rgba(44,35,32,0.10);
+      --shadow-lg:  0 8px 32px rgba(44,35,32,0.12);
+      --shadow-nav: 0 1px 0 #EDE3DC;
+      --font-display: 'Cormorant Garamond', 'SimSun', serif;
+      --font-body:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --duration-fast:   150ms;
+      --duration-normal: 250ms;
+      --duration-slow:   400ms;
+      --ease-out:        cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-in-out:     cubic-bezier(0.4, 0, 0.6, 1);
+      --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    * { font-family: var(--font-body); }
+
+    body {
+      background-color: var(--color-bg-base);
+      color: var(--color-text-primary);
+    }
+
+    /* ── 侧边栏 ── */
+    .sidebar {
+      width: 220px;
+      background: #2C2320;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-logo {
+      height: 64px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 1px solid rgba(253,250,248,0.08);
+    }
+    .sidebar-logo-sub {
+      font-size: 10px;
+      color: rgba(253,250,248,0.45);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .sidebar-logo-name {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--color-gold);
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    .sidebar-nav { flex: 1; padding: 12px 8px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(253,250,248,0.75);
+      text-decoration: none;
+      margin-bottom: 2px;
+      transition: background var(--duration-fast) var(--ease-out),
+                  color var(--duration-fast) var(--ease-out);
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover { background: rgba(253,250,248,0.06); color: #FDFAF8; }
+    .nav-item.active {
+      background: rgba(196,132,90,0.18);
+      color: var(--color-primary-muted);
+      border-left-color: var(--color-primary);
+      font-weight: 500;
+    }
+    .sidebar-footer {
+      padding: 16px 16px;
+      border-top: 1px solid rgba(253,250,248,0.08);
+    }
+    .sidebar-user-name {
+      font-size: 11px;
+      color: rgba(253,250,248,0.45);
+      margin-bottom: 6px;
+    }
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: rgba(253,250,248,0.55);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+    .logout-btn:hover { color: #FDFAF8; }
+
+    /* ── Topbar ── */
+    .topbar {
+      height: 56px;
+      background: #fff;
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: var(--shadow-nav);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .topbar-back {
+      color: var(--color-text-muted);
+      transition: color var(--duration-fast) var(--ease-out);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+    .topbar-back:hover { color: var(--color-text-primary); }
+    .topbar-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    /* ── 表单卡片 ── */
+    .form-card {
+      background: #fff;
+      border: 1px solid var(--color-border-light);
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(44,35,32,0.06);
+      padding: 32px;
+    }
+
+    /* ── 表单标签 ── */
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      margin-bottom: 6px;
+    }
+    .form-required { color: var(--color-danger); margin-left: 2px; }
+    .form-group { margin-bottom: 20px; }
+
+    /* ── 输入框 4.4 规范 ── */
+    .input-field {
+      width: 100%;
+      height: 40px;
+      background: #fff;
+      border: 1.5px solid var(--color-border-light);
+      border-radius: 4px;
+      padding: 0 14px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      color: var(--color-text-primary);
+      box-shadow: var(--shadow-xs);
+      transition: border-color var(--duration-normal) var(--ease-out),
+                  box-shadow var(--duration-normal) var(--ease-out);
+      outline: none;
+      box-sizing: border-box;
+    }
+    .input-field::placeholder { color: var(--color-text-muted); }
+    .input-field:focus {
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 3px rgba(196,132,90,0.12);
+    }
+
+    /* select 追加下拉箭头 */
+    select.input-field {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A89690' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    /* textarea */
+    textarea.input-field {
+      height: auto;
+      min-height: 96px;
+      padding: 10px 14px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    /* ── 图片上传区 ── */
+    .upload-zone {
+      border: 1.5px dashed var(--color-border-medium);
+      border-radius: 4px;
+      padding: 20px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--duration-normal) var(--ease-out),
+                  background var(--duration-normal) var(--ease-out);
+    }
+    .upload-zone:hover {
+      border-color: var(--color-primary);
+      background: var(--color-bg-overlay);
+    }
+    .upload-zone-icon { color: var(--color-text-muted); margin: 0 auto 8px; }
+    .upload-zone-text { font-size: 12px; color: var(--color-text-secondary); }
+    .upload-zone-hint { font-size: 11px; color: var(--color-text-muted); margin-top: 4px; }
+
+    /* ── 图片预览 ── */
+    .img-preview {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid var(--color-border-light);
+    }
+
+    /* ── 标签复选框 4.3 规范 ── */
+    .tag-option {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 3px;
+      background: var(--color-primary-muted);
+      color: var(--color-primary-dark);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      transition: background var(--duration-fast) var(--ease-out),
+                  color var(--duration-fast) var(--ease-out);
+    }
+    .tag-option input[type="checkbox"] { display: none; }
+    .tag-option:hover { background: var(--color-accent); }
+    .tag-option:has(input:checked) {
+      background: var(--color-primary);
+      color: var(--color-text-on-primary);
+    }
+
+    /* ── 按钮 4.1 规范 ── */
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-text-on-primary);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 28px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(196,132,90,0.30);
+      transition: all var(--duration-normal) var(--ease-out);
+    }
+    .btn-primary:hover {
+      background: var(--color-primary-light);
+      box-shadow: 0 4px 12px rgba(196,132,90,0.40);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active { background: var(--color-primary-dark); transform: translateY(0) scale(0.98); }
+    .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--color-primary);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      border: 1.5px solid var(--color-primary);
+      border-radius: 4px;
+      padding: 9px 28px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: all var(--duration-normal) var(--ease-out);
+    }
+    .btn-secondary:hover { background: var(--color-primary-muted); }
+    .btn-secondary:active { background: var(--color-accent); }
+  </style>
+</head>
+<body>
+<div class="flex h-screen">
+
+  <!-- ── 侧边栏 ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-sub">Admin</div>
+      <div class="sidebar-logo-name">美妆销售系统</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        首页
+      </a>
+      <a href="products.html" class="nav-item active">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        商品管理
+      </a>
+      <a href="brands.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+        品牌管理
+      </a>
+      <a href="tags.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+        标签管理
+      </a>
+      <a href="orders.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        订单管理
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user-name" id="sidebar-user"></div>
+      <button onclick="authLogout()" class="logout-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        退出登录
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── 主内容 ── -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <!-- 顶栏 -->
+    <header class="topbar">
+      <a href="products.html" class="topbar-back">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      </a>
+      <h1 id="page-title" class="topbar-title">新增商品</h1>
+    </header>
+
+    <!-- 主体 -->
+    <main class="flex-1 overflow-auto" style="padding: 24px; background: var(--color-bg-base);">
+      <div style="max-width: 720px; margin: 0 auto;">
+        <div class="form-card">
+          <form id="product-form" novalidate>
+
+            <!-- 商品名称 -->
+            <div class="form-group">
+              <label class="form-label" for="f-name">商品名称<span class="form-required">*</span></label>
+              <input id="f-name" type="text" placeholder="请输入商品名称" class="input-field" />
+            </div>
+
+            <!-- 品牌 -->
+            <div class="form-group">
+              <label class="form-label" for="f-brand">品牌<span class="form-required">*</span></label>
+              <select id="f-brand" class="input-field">
+                <option value="">请选择品牌</option>
+              </select>
+            </div>
+
+            <!-- 价格 -->
+            <div class="form-group">
+              <label class="form-label" for="f-price">销售价格（元）<span class="form-required">*</span></label>
+              <input id="f-price" type="number" min="0" step="0.01" placeholder="0.00" class="input-field" />
+            </div>
+
+            <!-- 商品图片 -->
+            <div class="form-group">
+              <label class="form-label">商品图片</label>
+              <div style="display:flex;align-items:flex-start;gap:16px;">
+                <div id="img-preview-wrap" class="hidden">
+                  <img id="img-preview" src="" alt="" class="img-preview" />
+                </div>
+                <div style="flex:1;">
+                  <label for="f-image" style="cursor:pointer;display:block;">
+                    <div class="upload-zone">
+                      <svg class="upload-zone-icon" width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                      <div class="upload-zone-text">点击上传图片</div>
+                      <div class="upload-zone-hint">支持 jpg / png / webp</div>
+                    </div>
+                  </label>
+                  <input id="f-image" type="file" accept=".jpg,.jpeg,.png,.webp,.gif" class="hidden" />
+                </div>
+              </div>
+              <input id="f-image-url" type="hidden" />
+            </div>
+
+            <!-- 商品备注 -->
+            <div class="form-group">
+              <label class="form-label" for="f-remark">商品备注</label>
+              <textarea id="f-remark" rows="3" placeholder="商品说明、卖点等（选填）" class="input-field"></textarea>
+            </div>
+
+            <!-- 标签 -->
+            <div class="form-group" style="margin-bottom: 28px;">
+              <label class="form-label">标签</label>
+              <div id="tag-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;">
+                <span style="font-size:12px;color:var(--color-text-muted);">加载中...</span>
+              </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div style="display:flex;align-items:center;gap:12px;">
+              <button type="submit" id="submit-btn" class="btn-primary">保存</button>
+              <a href="products.html" class="btn-secondary">取消</a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 hidden"></div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  requireAuth();
+  document.getElementById('sidebar-user').textContent = getAdminUser();
+
+  const API_IMG = 'http://localhost:8000';
+  const urlParams = new URLSearchParams(window.location.search);
+  const editId = urlParams.get('id');
+  let uploadedImageUrl = null;
+
+  if (editId) {
+    document.getElementById('page-title').textContent = '编辑商品';
+  }
+
+  // 加载品牌选项
+  async function loadBrands() {
+    const brands = await api.get('/brands');
+    const sel = document.getElementById('f-brand');
+    brands.forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b.id;
+      opt.textContent = b.name;
+      sel.appendChild(opt);
+    });
+  }
+
+  // 加载标签复选框
+  async function loadTags(selectedIds = []) {
+    const tags = await api.get('/tags');
+    const wrap = document.getElementById('tag-checkboxes');
+    if (!tags.length) {
+      wrap.innerHTML = '<span style="font-size:12px;color:var(--color-text-muted);">暂无标签，请先在标签管理中添加</span>';
+      return;
+    }
+    wrap.innerHTML = tags.map(t => `
+      <label class="tag-option">
+        <input type="checkbox" value="${t.id}" ${selectedIds.includes(t.id) ? 'checked' : ''} />
+        ${t.name}
+      </label>
+    `).join('');
+  }
+
+  // 编辑模式：回填数据
+  async function loadProduct() {
+    try {
+      const p = await api.get(`/products/${editId}`);
+      document.getElementById('f-name').value   = p.name;
+      document.getElementById('f-brand').value  = p.brand_id;
+      document.getElementById('f-price').value  = p.price;
+      document.getElementById('f-remark').value = p.remark || '';
+      uploadedImageUrl = p.image_url || null;
+      document.getElementById('f-image-url').value = uploadedImageUrl || '';
+
+      if (p.image_url) {
+        const src = p.image_url.startsWith('http') ? p.image_url : API_IMG + p.image_url;
+        document.getElementById('img-preview').src = src;
+        document.getElementById('img-preview-wrap').classList.remove('hidden');
+      }
+
+      const selectedIds = p.tags.map(t => t.id);
+      await loadTags(selectedIds);
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  // 图片上传
+  document.getElementById('f-image').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 本地预览
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      document.getElementById('img-preview').src = ev.target.result;
+      document.getElementById('img-preview-wrap').classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+
+    // 上传到后端
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await api.upload('/products/upload-image', formData);
+      uploadedImageUrl = res.url;
+      document.getElementById('f-image-url').value = uploadedImageUrl;
+      showToast('图片上传成功');
+    } catch (err) {
+      showToast('图片上传失败: ' + err.message, 'error');
+    }
+  });
+
+  // 表单提交
+  document.getElementById('product-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name     = document.getElementById('f-name').value.trim();
+    const brand_id = Number(document.getElementById('f-brand').value);
+    const price    = document.getElementById('f-price').value;
+    const remark   = document.getElementById('f-remark').value.trim();
+
+    if (!name)     return showToast('请填写商品名称', 'error');
+    if (!brand_id) return showToast('请选择品牌', 'error');
+    if (!price)    return showToast('请填写价格', 'error');
+
+    const tag_ids = [...document.querySelectorAll('#tag-checkboxes input:checked')].map(el => Number(el.value));
+    const image_url = uploadedImageUrl || document.getElementById('f-image-url').value || null;
+
+    const body = { name, brand_id, price: Number(price), remark: remark || null, image_url, tag_ids };
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = '保存中...';
+
+    try {
+      if (editId) {
+        await api.put(`/products/${editId}`, body);
+        showToast('商品已更新');
+      } else {
+        await api.post('/products', body);
+        showToast('商品已新增');
+      }
+      setTimeout(() => window.location.href = 'products.html', 800);
+    } catch (err) {
+      showToast(err.message, 'error');
+      btn.disabled = false;
+      btn.textContent = '保存';
+    }
+  });
+
+  // 初始化
+  async function init() {
+    await Promise.all([loadBrands(), editId ? loadProduct() : loadTags()]);
+  }
+
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>首页 - 美妆管理系统</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/custom.css" />
+  <style>
+    :root {
+      --color-primary:        #C4845A;
+      --color-primary-light:  #D9A882;
+      --color-primary-dark:   #A8694A;
+      --color-primary-muted:  #F0D5C5;
+      --color-accent:         #E8C9A8;
+      --color-gold:           #BFA080;
+      --color-bg-base:        #FDFAF8;
+      --color-bg-warm:        #F5EDE8;
+      --color-bg-section:     #FAF6F3;
+      --color-bg-overlay:     rgba(196,132,90,0.06);
+      --color-text-primary:   #2C2320;
+      --color-text-secondary: #6B5E58;
+      --color-text-muted:     #A89690;
+      --color-text-on-primary:#FDFAF8;
+      --color-text-link:      #C4845A;
+      --color-border-light:   #EDE3DC;
+      --color-border-medium:  #D9CBBE;
+      --color-border-focus:   #C4845A;
+      --color-success:        #7BAF8A;
+      --color-success-bg:     #EEF5F0;
+      --color-warning:        #C9935A;
+      --color-warning-bg:     #FBF2EA;
+      --color-danger:         #B86A6A;
+      --color-danger-bg:      #F7EDED;
+      --color-info:           #7A9BB5;
+      --color-info-bg:        #EEF3F8;
+      --shadow-xs:  0 1px 2px rgba(44,35,32,0.05);
+      --shadow-sm:  0 2px 8px rgba(44,35,32,0.07);
+      --shadow-md:  0 4px 16px rgba(44,35,32,0.10);
+      --shadow-lg:  0 8px 32px rgba(44,35,32,0.12);
+      --shadow-nav: 0 1px 0 #EDE3DC;
+      --font-display: 'Cormorant Garamond', 'SimSun', serif;
+      --font-body:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --duration-fast:   150ms;
+      --duration-normal: 250ms;
+      --duration-slow:   400ms;
+      --ease-out:        cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-in-out:     cubic-bezier(0.4, 0, 0.6, 1);
+      --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    * { font-family: var(--font-body); }
+
+    body {
+      background-color: var(--color-bg-base);
+      color: var(--color-text-primary);
+    }
+
+    /* ── 侧边栏 ── */
+    .sidebar {
+      width: 220px;
+      background: #2C2320;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-logo {
+      height: 64px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 1px solid rgba(253,250,248,0.08);
+    }
+    .sidebar-logo-sub {
+      font-size: 10px;
+      color: rgba(253,250,248,0.45);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .sidebar-logo-name {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--color-gold);
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(253,250,248,0.75);
+      text-decoration: none;
+      margin-bottom: 2px;
+      transition: background var(--duration-fast) var(--ease-out),
+                  color var(--duration-fast) var(--ease-out);
+      border-left: 3px solid transparent;
+    }
+    .nav-item:hover {
+      background: rgba(253,250,248,0.06);
+      color: #FDFAF8;
+    }
+    .nav-item.active {
+      background: rgba(196,132,90,0.18);
+      color: var(--color-primary-muted);
+      border-left-color: var(--color-primary);
+      font-weight: 500;
+    }
+    .sidebar-footer {
+      padding: 16px 16px;
+      border-top: 1px solid rgba(253,250,248,0.08);
+    }
+    .sidebar-user-name {
+      font-size: 11px;
+      color: rgba(253,250,248,0.45);
+      margin-bottom: 6px;
+    }
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: rgba(253,250,248,0.55);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+    .logout-btn:hover { color: #FDFAF8; }
+
+    /* ── Topbar ── */
+    .topbar {
+      height: 56px;
+      background: #fff;
+      border-bottom: 1px solid var(--color-border-light);
+      box-shadow: var(--shadow-nav);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .topbar-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .topbar-date {
+      font-size: 12px;
+      color: var(--color-text-muted);
+    }
+
+    /* ── 统计卡片 ── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--color-border-light);
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(44,35,32,0.06);
+      padding: 24px;
+      animation: fadeInUp var(--duration-slow) var(--ease-out) both;
+    }
+    .stat-card:nth-child(1) { animation-delay: 0ms; }
+    .stat-card:nth-child(2) { animation-delay: 60ms; }
+    .stat-card:nth-child(3) { animation-delay: 120ms; }
+    .stat-card:nth-child(4) { animation-delay: 180ms; }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 300;
+      color: var(--color-text-primary);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .stat-unit {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-top: 8px;
+    }
+    /* 卡片左侧装饰线 */
+    .stat-card-today { border-left: 3px solid var(--color-primary); }
+    .stat-card-month { border-left: 3px solid var(--color-accent); }
+
+    /* ── 快捷入口卡片 ── */
+    .quick-card {
+      background: #fff;
+      border: 1px solid var(--color-border-light);
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(44,35,32,0.06);
+      padding: 24px;
+      animation: fadeInUp var(--duration-slow) var(--ease-out) both;
+      animation-delay: 240ms;
+    }
+    .quick-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--color-border-light);
+      text-decoration: none;
+      text-align: center;
+      transition: all var(--duration-normal) var(--ease-out);
+    }
+    .quick-link:hover {
+      border-color: var(--color-primary);
+      background: var(--color-bg-overlay);
+    }
+    .quick-link svg {
+      color: var(--color-text-muted);
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+    .quick-link:hover svg { color: var(--color-primary); }
+    .quick-link span {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+    }
+
+    /* skeleton */
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton {
+      background: linear-gradient(90deg, #F0E8E3 25%, #FAF6F3 50%, #F0E8E3 75%);
+      background-size: 800px 100%;
+      animation: shimmer 1.4s linear infinite;
+      border-radius: 4px;
+      color: transparent !important;
+    }
+  </style>
+</head>
+<body>
+<div class="flex h-screen">
+
+  <!-- ── 侧边栏 ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-sub">Admin</div>
+      <div class="sidebar-logo-name">美妆销售系统</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="nav-item active">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        首页
+      </a>
+      <a href="products.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        商品管理
+      </a>
+      <a href="brands.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+        品牌管理
+      </a>
+      <a href="tags.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+        标签管理
+      </a>
+      <a href="orders.html" class="nav-item">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        订单管理
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user-name" id="sidebar-user">管理员</div>
+      <button onclick="authLogout()" class="logout-btn">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        退出登录
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── 主内容 ── -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <!-- 顶栏 -->
+    <header class="topbar">
+      <h1 class="topbar-title">数据总览</h1>
+      <span id="today-date" class="topbar-date"></span>
+    </header>
+
+    <!-- 主体 -->
+    <main class="flex-1 overflow-auto" style="padding: 24px; background: var(--color-bg-base);">
+
+      <!-- 统计卡片 2×2 -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <!-- 今日订单数 -->
+        <div class="stat-card stat-card-today">
+          <div class="stat-label">今日订单数</div>
+          <div id="today-count" class="stat-number skeleton" style="min-height: 40px; min-width: 60px; display: inline-block;">—</div>
+          <div class="stat-unit">笔</div>
+        </div>
+        <!-- 今日金额 -->
+        <div class="stat-card stat-card-today">
+          <div class="stat-label">今日订单金额</div>
+          <div id="today-amount" class="stat-number skeleton" style="min-height: 40px; min-width: 100px; display: inline-block;">—</div>
+          <div class="stat-unit">元</div>
+        </div>
+        <!-- 本月订单数 -->
+        <div class="stat-card stat-card-month">
+          <div class="stat-label">本月订单数</div>
+          <div id="month-count" class="stat-number skeleton" style="min-height: 40px; min-width: 60px; display: inline-block;">—</div>
+          <div class="stat-unit">笔</div>
+        </div>
+        <!-- 本月金额 -->
+        <div class="stat-card stat-card-month">
+          <div class="stat-label">本月订单金额</div>
+          <div id="month-amount" class="stat-number skeleton" style="min-height: 40px; min-width: 100px; display: inline-block;">—</div>
+          <div class="stat-unit">元</div>
+        </div>
+      </div>
+
+      <!-- 快捷入口 -->
+      <div class="quick-card">
+        <div style="font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 16px;">快捷入口</div>
+        <div class="grid grid-cols-4 gap-3">
+          <a href="products.html" class="quick-link">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            <span>商品管理</span>
+          </a>
+          <a href="brands.html" class="quick-link">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+            <span>品牌管理</span>
+          </a>
+          <a href="tags.html" class="quick-link">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+            <span>标签管理</span>
+          </a>
+          <a href="orders.html" class="quick-link">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <span>订单管理</span>
+          </a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 hidden"></div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  requireAuth();
+
+  // 显示用户名 & 日期
+  document.getElementById('sidebar-user').textContent = getAdminUser();
+  document.getElementById('today-date').textContent = new Date().toLocaleDateString('zh-CN', {
+    year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
+  });
+
+  // 移除骨架样式
+  function clearSkeleton(id) {
+    document.getElementById(id).classList.remove('skeleton');
+    document.getElementById(id).style.minWidth = '';
+    document.getElementById(id).style.minHeight = '';
+  }
+
+  // 加载统计数据
+  async function loadStats() {
+    try {
+      const d = await api.get('/stats');
+      document.getElementById('today-count').textContent  = d.today_order_count;
+      document.getElementById('today-amount').textContent = '¥ ' + Number(d.today_order_amount).toLocaleString('zh-CN', {minimumFractionDigits: 2});
+      document.getElementById('month-count').textContent  = d.month_order_count;
+      document.getElementById('month-amount').textContent = '¥ ' + Number(d.month_order_amount).toLocaleString('zh-CN', {minimumFractionDigits: 2});
+      ['today-count','today-amount','month-count','month-amount'].forEach(clearSkeleton);
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  loadStats();
+</script>
+</body>
+</html>

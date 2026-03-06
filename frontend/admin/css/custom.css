@@ -1,0 +1,55 @@
+/* 美妆管理后台 - 自定义补充样式 */
+
+/* Toast 动画 */
+#toast {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+#toast.show {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+/* 表格行悬停 */
+tbody tr { transition: background-color 0.1s; }
+
+/* 输入框聚焦去除蓝色轮廓，统一灰色 */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #111827;
+}
+
+/* 图片上传预览区 */
+.img-preview {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+/* 复选框统一 */
+input[type="checkbox"] { accent-color: #111827; }
+
+/* 侧边栏导航激活项 */
+.nav-active {
+  background-color: #111827;
+  color: #ffffff;
+}
+.nav-active:hover {
+  background-color: #1f2937;
+  color: #ffffff;
+}
+
+/* 加载骨架 */
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.skeleton { animation: pulse 1.5s ease-in-out infinite; background-color: #f3f4f6; border-radius: 4px; }
+
+/* 模态框打开时锁定 body 滚动 */
+body.modal-open { overflow: hidden; }
+
+/* 状态徽章 */
+.badge { display:inline-flex; align-items:center; padding:2px 10px; border-radius:999px; font-size:12px; font-weight:500; white-space:nowrap; }
+.badge-pending  { background:#f3f4f6; color:#374151; }
+.badge-confirm  { background:#e5e7eb; color:#111827; }
+.badge-done     { background:#111827; color:#ffffff; }
+.badge-cancel   { background:#f9fafb; color:#9ca3af; border:1px solid #e5e7eb; }

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>标签管理 - 美妆管理系统</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/custom.css" />
+  <style>
+    :root {
+      --color-primary:        #C4845A;
+      --color-primary-light:  #D9A882;
+      --color-primary-dark:   #A8694A;
+      --color-primary-muted:  #F0D5C5;
+      --color-accent:         #E8C9A8;
+      --color-gold:           #BFA080;
+      --color-bg-base:        #FDFAF8;
+      --color-bg-warm:        #F5EDE8;
+      --color-bg-section:     #FAF6F3;
+      --color-bg-overlay:     rgba(196,132,90,0.06);
+      --color-text-primary:   #2C2320;
+      --color-text-secondary: #6B5E58;
+      --color-text-muted:     #A89690;
+      --color-text-on-primary:#FDFAF8;
+      --color-text-link:      #C4845A;
+      --color-border-light:   #EDE3DC;
+      --color-border-medium:  #D9CBBE;
+      --color-border-focus:   #C4845A;
+      --color-success:        #7BAF8A;
+      --color-success-bg:     #EEF5F0;
+      --color-warning:        #C9935A;
+      --color-warning-bg:     #FBF2EA;
+      --color-danger:         #B86A6A;
+      --color-danger-bg:      #F7EDED;
+      --color-info:           #7A9BB5;
+      --color-info-bg:        #EEF3F8;
+      --shadow-xs:  0 1px 2px rgba(44,35,32,0.05);
+      --shadow-sm:  0 2px 8px rgba(44,35,32,0.07);
+      --shadow-md:  0 4px 16px rgba(44,35,32,0.10);
+      --shadow-lg:  0 8px 32px rgba(44,35,32,0.12);
+      --shadow-nav: 0 1px 0 #EDE3DC;
+      --font-display: 'Cormorant Garamond', 'SimSun', serif;
+      --font-body:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --duration-fast:   150ms;
+      --duration-normal: 250ms;
+      --duration-slow:   400ms;
+      --ease-out:        cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-in-out:     cubic-bezier(0.4, 0, 0.6, 1);
+      --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    * { font-family: var(--font-body); }
+
+    body {
+      background-color: var(--color-bg-base);
+      color: var(--color-text-primary);
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    /* ── 侧边栏 ── */
+    .sidebar {
+      width: 220px;
+      background: #2C2320;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-logo {
+      height: 64px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-bottom: 1px solid rgba(253,250,248,0.08);
+    }
+    .sidebar-logo-sub {
+      font-size: 10px;
+      color: rgba(253,250,248,0.45);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .sidebar-logo-name {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--color-gold);
+      letter-spacing: 0.08em;
+      margin-top: 2px;
+    }
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 4px;
+      border-left: 3px solid transparent;
+      font-size: 13px;
+      color: rgba(253,250,248,0.75);
+      text-decoration: none;
+      margin-bottom: 2px;
+      transition: background var(--duration-fast) var(--ease-out),
+                  color var(--duration-fast) var(--ease-out);
+    }
+    .nav-item:hover {
+      background: rgba(253,250,248,0.06);
+      color: #FDFAF8;
+    }
+    .nav-item.active {
+      background: rgba(196,132,90,0.18);
+      color: var(--color-primary-muted);
+      border-left-color: var(--color-primary);
+    }
+    .nav-item svg { flex-shrink: 0; }
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid rgba(253,250,248,0.08);
+    }
+    .sidebar-user-name {
+      font-size: 11px;
+      color: rgba(253,250,248,0.45);
+      margin-bottom: 6px;
+    }
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: rgba(253,250,248,0.55);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+    .logout-btn:hover { color: #FDFAF8; }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--color-border-light);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-nav);
+    }
+    .topbar-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+
+    /* ── 主按钮 ── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 36px;
+      padding: 0 18px;
+      background: var(--color-primary);
+      color: var(--color-text-on-primary);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(196,132,90,0.28);
+      transition: all var(--duration-normal) var(--ease-out);
+    }
+    .btn-primary:hover {
+      background: var(--color-primary-light);
+      box-shadow: 0 4px 12px rgba(196,132,90,0.40);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active {
+      background: var(--color-primary-dark);
+      transform: translateY(0) scale(0.98);
+    }
+    .btn-primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── 次按钮 ── */
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      padding: 0 18px;
+      background: transparent;
+      color: var(--color-primary);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      border: 1.5px solid var(--color-primary);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all var(--duration-normal) var(--ease-out);
+    }
+    .btn-secondary:hover { background: var(--color-primary-muted); }
+    .btn-secondary:active { background: var(--color-accent); }
+
+    /* ── 文字操作按钮 ── */
+    .btn-edit-text {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      transition: color var(--duration-fast);
+    }
+    .btn-edit-text:hover { color: var(--color-primary); }
+
+    .btn-danger-text {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px 4px;
+      transition: color var(--duration-fast);
+    }
+    .btn-danger-text:hover { color: var(--color-danger); }
+
+    /* ── 输入框 ── */
+    .input-field {
+      width: 100%;
+      height: 40px;
+      background: #fff;
+      border: 1.5px solid var(--color-border-light);
+      border-radius: 4px;
+      padding: 0 14px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      color: var(--color-text-primary);
+      box-shadow: var(--shadow-xs);
+      transition: border-color var(--duration-normal) var(--ease-out),
+                  box-shadow var(--duration-normal) var(--ease-out);
+      outline: none;
+      box-sizing: border-box;
+    }
+    .input-field::placeholder { color: var(--color-text-muted); }
+    .input-field:focus {
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 3px rgba(196,132,90,0.12);
+    }
+
+    /* ── 标签卡片区 ── */
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--color-primary-muted);
+      color: var(--color-primary-dark);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 3px;
+    }
+    .tag-pill-hash {
+      color: var(--color-primary);
+      font-weight: 400;
+    }
+    .tag-cloud-empty {
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    /* ── 表格卡片 ── */
+    .table-card {
+      background: #fff;
+      border: 1px solid var(--color-border-light);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(44,35,32,0.06);
+    }
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table thead th {
+      background: var(--color-bg-section);
+      color: var(--color-text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 12px 16px;
+      border-bottom: 1.5px solid var(--color-border-light);
+      text-align: left;
+      white-space: nowrap;
+    }
+    .data-table thead th.col-right { text-align: right; }
+    .data-table tbody tr {
+      background: #fff;
+      border-bottom: 1px solid #F2EAE5;
+      transition: background var(--duration-fast) ease;
+    }
+    .data-table tbody tr:last-child { border-bottom: none; }
+    .data-table tbody tr:hover { background: var(--color-bg-section); }
+    .data-table td { padding: 14px 16px; }
+    .data-table td.col-right { text-align: right; }
+    .td-id { color: var(--color-text-muted); font-size: 12px; }
+    .td-name { color: var(--color-text-primary); font-size: 14px; font-weight: 500; }
+    .td-hash { color: var(--color-text-muted); margin-right: 3px; }
+
+    /* ── 空状态 ── */
+    .empty-state {
+      padding: 56px 0;
+      text-align: center;
+    }
+    .empty-state-icon {
+      width: 36px;
+      height: 36px;
+      color: var(--color-border-medium);
+      margin: 0 auto 12px;
+    }
+    .empty-state-text {
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    /* ── 弹窗 ── */
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .modal-overlay {
+      background: rgba(44,35,32,0.40);
+      backdrop-filter: blur(2px);
+    }
+    .modal-dialog {
+      background: #fff;
+      border-radius: 8px;
+      padding: 32px;
+      box-shadow: 0 16px 48px rgba(44,35,32,0.18);
+      max-width: 440px;
+      width: calc(100% - 32px);
+      animation: modalIn 200ms ease-out both;
+    }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      margin-bottom: 6px;
+    }
+    .form-required { color: var(--color-danger); }
+    .form-group { margin-bottom: 20px; }
+    .modal-footer {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .modal-footer .btn-primary,
+    .modal-footer .btn-secondary { flex: 1; }
+  </style>
+</head>
+<body>
+<div class="flex h-screen">
+
+  <!-- ── 侧边栏 ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-sub">Admin</div>
+      <div class="sidebar-logo-name">美妆销售系统</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        首页
+      </a>
+      <a href="products.html" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+        商品管理
+      </a>
+      <a href="brands.html" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+        品牌管理
+      </a>
+      <a href="tags.html" class="nav-item active">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+        标签管理
+      </a>
+      <a href="orders.html" class="nav-item">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        订单管理
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user-name" id="sidebar-user"></div>
+      <button onclick="authLogout()" class="logout-btn">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        退出登录
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── 主内容 ── -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <header class="topbar">
+      <h1 class="topbar-title">标签管理</h1>
+      <button onclick="openModal()" class="btn-primary">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        新增标签
+      </button>
+    </header>
+
+    <main class="flex-1 overflow-auto" style="padding: 24px; background: var(--color-bg-base);">
+      <div style="max-width: 560px;">
+        <!-- 标签卡片展示 -->
+        <div id="tag-cards" class="tag-cloud">
+          <span class="tag-cloud-empty">加载中...</span>
+        </div>
+
+        <!-- 表格列表 -->
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 64px;">ID</th>
+                <th>标签名称</th>
+                <th class="col-right">操作</th>
+              </tr>
+            </thead>
+            <tbody id="tag-list">
+              <tr>
+                <td colspan="3">
+                  <div class="empty-state">
+                    <p class="empty-state-text">加载中...</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ── 模态框 ── -->
+<div id="modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center" onclick="handleOverlayClick(event)">
+  <div class="modal-dialog" onclick="event.stopPropagation()">
+    <h3 id="modal-title" class="modal-title">新增标签</h3>
+    <div class="form-group">
+      <label class="form-label">标签名称 <span class="form-required">*</span></label>
+      <input id="modal-input" type="text" placeholder="如：内贸、跨境、新品、限量"
+        class="input-field"
+        onkeydown="if(event.key==='Enter') saveTag()" />
+    </div>
+    <div class="modal-footer">
+      <button onclick="saveTag()" id="modal-save-btn" class="btn-primary">保存</button>
+      <button onclick="closeModal()" class="btn-secondary">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 hidden"></div>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  requireAuth();
+  document.getElementById('sidebar-user').textContent = getAdminUser();
+
+  let editingId = null;
+
+  async function loadTags() {
+    const tbody = document.getElementById('tag-list');
+    const cards = document.getElementById('tag-cards');
+    try {
+      const tags = await api.get('/tags');
+      if (!tags.length) {
+        tbody.innerHTML = `
+          <tr><td colspan="3">
+            <div class="empty-state">
+              <svg class="empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+              <p class="empty-state-text">暂无标签，点击右上角新增</p>
+            </div>
+          </td></tr>`;
+        cards.innerHTML = '<span class="tag-cloud-empty">暂无标签</span>';
+        return;
+      }
+
+      // 卡片展示
+      cards.innerHTML = tags.map(t =>
+        `<span class="tag-pill"><span class="tag-pill-hash">#</span>${t.name}</span>`
+      ).join('');
+
+      // 表格
+      tbody.innerHTML = tags.map(t => `
+        <tr>
+          <td class="td-id">${t.id}</td>
+          <td class="td-name"><span class="td-hash">#</span>${t.name}</td>
+          <td class="col-right">
+            <div style="display:flex;justify-content:flex-end;align-items:center;gap:16px;">
+              <button onclick="openModal(${t.id}, '${t.name.replace(/'/g, "\\'")}')" class="btn-edit-text">编辑</button>
+              <button onclick="deleteTag(${t.id}, '${t.name.replace(/'/g, "\\'")}')" class="btn-danger-text">删除</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="3" style="padding:48px 0;text-align:center;color:var(--color-danger);font-size:13px;">加载失败</td></tr>`;
+      showToast(err.message, 'error');
+    }
+  }
+
+  function openModal(id = null, name = '') {
+    editingId = id;
+    document.getElementById('modal-title').textContent = id ? '编辑标签' : '新增标签';
+    document.getElementById('modal-input').value = name;
+    document.getElementById('modal').classList.remove('hidden');
+    document.body.classList.add('modal-open');
+    setTimeout(() => document.getElementById('modal-input').focus(), 50);
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.add('hidden');
+    document.body.classList.remove('modal-open');
+    editingId = null;
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal')) closeModal();
+  }
+
+  async function saveTag() {
+    const name = document.getElementById('modal-input').value.trim();
+    if (!name) { showToast('标签名称不能为空', 'error'); return; }
+
+    const btn = document.getElementById('modal-save-btn');
+    btn.disabled = true;
+    btn.textContent = '保存中...';
+
+    try {
+      if (editingId) {
+        await api.put(`/tags/${editingId}`, { name });
+        showToast('标签已更新');
+      } else {
+        await api.post('/tags', { name });
+        showToast('标签已新增');
+      }
+      closeModal();
+      loadTags();
+    } catch (err) {
+      showToast(err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '保存';
+    }
+  }
+
+  async function deleteTag(id, name) {
+    if (!confirm(`确认删除标签「${name}」？`)) return;
+    try {
+      await api.del(`/tags/${id}`);
+      showToast('已删除');
+      loadTags();
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  }
+
+  loadTags();
+</script>
+</body>
+</html>
