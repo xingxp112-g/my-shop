@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>确认订单 - 美妆精选</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts（附录 B）-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/custom.css" />
+
+  <style>
+    /* ══ CSS 变量（附录 A）══════════════════════════════ */
+    :root {
+      --color-primary:        #C4845A;
+      --color-primary-light:  #D9A882;
+      --color-primary-dark:   #A8694A;
+      --color-primary-muted:  #F0D5C5;
+      --color-accent:         #E8C9A8;
+      --color-gold:           #BFA080;
+      --color-bg-base:        #FDFAF8;
+      --color-bg-warm:        #F5EDE8;
+      --color-bg-section:     #FAF6F3;
+      --color-bg-overlay:     rgba(196,132,90,0.06);
+      --color-text-primary:   #2C2320;
+      --color-text-secondary: #6B5E58;
+      --color-text-muted:     #A89690;
+      --color-text-on-primary:#FDFAF8;
+      --color-text-link:      #C4845A;
+      --color-border-light:   #EDE3DC;
+      --color-border-medium:  #D9CBBE;
+      --color-border-focus:   #C4845A;
+      --color-success:        #7BAF8A;
+      --color-success-bg:     #EEF5F0;
+      --color-warning:        #C9935A;
+      --color-warning-bg:     #FBF2EA;
+      --color-danger:         #B86A6A;
+      --color-danger-bg:      #F7EDED;
+      --color-info:           #7A9BB5;
+      --color-info-bg:        #EEF3F8;
+      --shadow-xs:  0 1px 2px rgba(44,35,32,0.05);
+      --shadow-sm:  0 2px 8px rgba(44,35,32,0.07);
+      --shadow-md:  0 4px 16px rgba(44,35,32,0.10);
+      --shadow-lg:  0 8px 32px rgba(44,35,32,0.12);
+      --shadow-nav: 0 1px 0 #EDE3DC;
+      --font-display: 'Cormorant Garamond', 'SimSun', serif;
+      --font-body:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --duration-fast:   150ms;
+      --duration-normal: 250ms;
+      --duration-slow:   400ms;
+      --ease-out:        cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-in-out:     cubic-bezier(0.4, 0, 0.6, 1);
+      --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ══ 页面进场动效 ══════════════════════════════════ */
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-bg-base);
+      color: var(--color-text-primary);
+      animation: pageEnter 300ms var(--ease-out) both;
+    }
+
+    /* ══ 内容卡片淡入 ══════════════════════════════════ */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    main > .card:nth-child(1) { animation: fadeInUp 400ms var(--ease-out) 80ms both; }
+    main > .card:nth-child(2) { animation: fadeInUp 400ms var(--ease-out) 180ms both; }
+
+    /* ══ 导航标题 ══════════════════════════════════════ */
+    .nav-title {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      color: var(--color-text-primary);
+    }
+
+    /* ══ 卡片内区块标题 ════════════════════════════════ */
+    .section-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
+    /* ══ 表单标签 ══════════════════════════════════════ */
+    .form-label {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      color: var(--color-text-muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    /* ══ 输入框（4.4 规范）+ focus 玫瑰金光晕 ════════ */
+    .form-input {
+      width: 100%;
+      height: 44px;
+      padding: 0 14px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--color-text-primary);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--color-border-light);
+      border-radius: 4px;
+      box-shadow: var(--shadow-xs);
+      transition:
+        border-color var(--duration-normal) ease,
+        box-shadow var(--duration-normal) ease;
+    }
+    .form-input::placeholder {
+      color: var(--color-text-muted);
+      font-weight: 300;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 3px rgba(196,132,90,0.12);
+    }
+
+    /* ══ Textarea（继承 form-input 并覆盖高度）══════ */
+    .form-textarea {
+      width: 100%;
+      padding: 12px 14px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--color-text-primary);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--color-border-light);
+      border-radius: 4px;
+      box-shadow: var(--shadow-xs);
+      min-height: 100px;
+      resize: vertical;
+      line-height: 1.6;
+      transition:
+        border-color var(--duration-normal) ease,
+        box-shadow var(--duration-normal) ease;
+    }
+    .form-textarea::placeholder {
+      color: var(--color-text-muted);
+      font-weight: 300;
+    }
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 3px rgba(196,132,90,0.12);
+    }
+
+    /* ══ 错误提示文字 ══════════════════════════════════ */
+    .form-error {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--color-danger);
+      margin-top: 4px;
+    }
+
+    /* ══ 金额展示：--font-display ════════════════════ */
+    .price-display {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--color-primary);
+    }
+
+    /* ══ 商品明细分割线 ════════════════════════════════ */
+    .divider-warm {
+      border-top: 1px solid var(--color-bg-warm);
+    }
+
+    /* ══ 底部提交栏 ════════════════════════════════════ */
+    .submit-bar {
+      background-color: #FFFFFF;
+      border-top: 1px solid var(--color-border-light);
+      box-shadow: 0 -2px 12px rgba(44,35,32,0.06);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ── 顶部导航（sticky，毛玻璃）── -->
+  <div class="sticky top-0 z-20 nav-bar">
+    <div class="flex items-center px-5 h-14 gap-3">
+      <a href="cart.html"
+         class="p-1.5 -ml-1.5 rounded"
+         style="color:var(--color-primary);"
+         aria-label="返回购物车">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <span class="nav-title flex-1">确认订单</span>
+    </div>
+  </div>
+
+  <!-- ── 主体内容区 ── -->
+  <main class="px-4 pt-4 pb-36 space-y-3">
+
+    <!-- 商品明细卡片 -->
+    <div class="card overflow-hidden">
+      <div class="px-4 pt-4 pb-3 divider-warm">
+        <span class="section-label">商品明细</span>
+      </div>
+      <div id="order-items">
+        <!-- 由 order.js 渲染 -->
+      </div>
+      <!-- 合计行 -->
+      <div class="flex items-center justify-between px-4 py-3 divider-warm">
+        <span class="text-xs" style="color:var(--color-text-muted);font-family:var(--font-body);">
+          共 <span id="item-count">0</span> 件
+        </span>
+        <span id="total-amount" class="price-display">¥0.00</span>
+      </div>
+    </div>
+
+    <!-- 填写信息卡片 -->
+    <div class="card px-4 py-4 space-y-4">
+      <span class="section-label">联系信息</span>
+
+      <!-- 客户姓名 -->
+      <div>
+        <label class="form-label" for="customer-name">
+          客户姓名 <span style="color:var(--color-primary);">*</span>
+        </label>
+        <input
+          id="customer-name"
+          type="text"
+          placeholder="请输入客户姓名"
+          maxlength="50"
+          class="form-input"
+        />
+        <p id="err-name" class="form-error hidden">请填写客户姓名</p>
+      </div>
+
+      <!-- 联系方式 -->
+      <div>
+        <label class="form-label" for="phone">
+          联系方式 <span style="color:var(--color-primary);">*</span>
+        </label>
+        <input
+          id="phone"
+          type="tel"
+          placeholder="请输入手机号"
+          maxlength="20"
+          class="form-input"
+        />
+        <p id="err-phone" class="form-error hidden">请填写联系方式</p>
+      </div>
+
+      <!-- 订单备注 -->
+      <div>
+        <label class="form-label" for="remark">
+          订单备注 <span style="color:var(--color-primary);opacity:0.5;">（选填）</span>
+        </label>
+        <textarea
+          id="remark"
+          rows="3"
+          placeholder="如有特殊要求，请在此备注"
+          maxlength="200"
+          class="form-textarea"
+        ></textarea>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── 底部提交栏（fixed）── -->
+  <div class="fixed bottom-0 left-0 right-0 z-10 submit-bar">
+    <div class="flex items-center justify-between px-5 py-3">
+      <div class="flex flex-col">
+        <span class="text-xs" style="color:var(--color-text-muted);font-family:var(--font-body);letter-spacing:0.06em;">实付金额</span>
+        <span id="total-amount-bottom" class="price-display">¥0.00</span>
+      </div>
+      <button
+        id="submit-btn"
+        class="btn-primary text-sm px-8 py-3 tracking-wider"
+      >提交订单</button>
+    </div>
+    <div style="height: env(safe-area-inset-bottom, 0px);"></div>
+  </div>
+
+  <!-- ── Toast ── -->
+  <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-none"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/order.js"></script>
+</body>
+</html>

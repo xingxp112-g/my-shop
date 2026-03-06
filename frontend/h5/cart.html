@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>购物车 - 美妆精选</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts（附录 B）-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/custom.css" />
+
+  <style>
+    /* ══ CSS 变量（附录 A）══════════════════════════════ */
+    :root {
+      --color-primary:        #C4845A;
+      --color-primary-light:  #D9A882;
+      --color-primary-dark:   #A8694A;
+      --color-primary-muted:  #F0D5C5;
+      --color-accent:         #E8C9A8;
+      --color-gold:           #BFA080;
+      --color-bg-base:        #FDFAF8;
+      --color-bg-warm:        #F5EDE8;
+      --color-bg-section:     #FAF6F3;
+      --color-bg-overlay:     rgba(196,132,90,0.06);
+      --color-text-primary:   #2C2320;
+      --color-text-secondary: #6B5E58;
+      --color-text-muted:     #A89690;
+      --color-text-on-primary:#FDFAF8;
+      --color-text-link:      #C4845A;
+      --color-border-light:   #EDE3DC;
+      --color-border-medium:  #D9CBBE;
+      --color-border-focus:   #C4845A;
+      --color-success:        #7BAF8A;
+      --color-success-bg:     #EEF5F0;
+      --color-warning:        #C9935A;
+      --color-warning-bg:     #FBF2EA;
+      --color-danger:         #B86A6A;
+      --color-danger-bg:      #F7EDED;
+      --color-info:           #7A9BB5;
+      --color-info-bg:        #EEF3F8;
+      --shadow-xs:  0 1px 2px rgba(44,35,32,0.05);
+      --shadow-sm:  0 2px 8px rgba(44,35,32,0.07);
+      --shadow-md:  0 4px 16px rgba(44,35,32,0.10);
+      --shadow-lg:  0 8px 32px rgba(44,35,32,0.12);
+      --shadow-nav: 0 1px 0 #EDE3DC;
+      --font-display: 'Cormorant Garamond', 'SimSun', serif;
+      --font-body:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --duration-fast:   150ms;
+      --duration-normal: 250ms;
+      --duration-slow:   400ms;
+      --ease-out:        cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-in-out:     cubic-bezier(0.4, 0, 0.6, 1);
+      --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ══ 页面进场动效 ══════════════════════════════════ */
+    @keyframes pageEnter {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-bg-base);
+      color: var(--color-text-primary);
+      animation: pageEnter 300ms var(--ease-out) both;
+    }
+
+    /* ══ 购物车角标弹动 ════════════════════════════════ */
+    @keyframes badgePop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.4); }
+      70%  { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+    .cart-badge.updated {
+      animation: badgePop 300ms var(--ease-spring);
+    }
+
+    /* ══ 购物车卡片条目：淡入上浮 ═════════════════════ */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    #cart-list > .card {
+      animation: fadeInUp 400ms var(--ease-out) both;
+    }
+    #cart-list > .card:nth-child(1) { animation-delay:   0ms; }
+    #cart-list > .card:nth-child(2) { animation-delay:  60ms; }
+    #cart-list > .card:nth-child(3) { animation-delay: 120ms; }
+    #cart-list > .card:nth-child(4) { animation-delay: 180ms; }
+    #cart-list > .card:nth-child(5) { animation-delay: 240ms; }
+    #cart-list > .card:nth-child(n+6) { animation-delay: 300ms; }
+
+    /* ══ 合计金额：--font-display 数字更有质感 ════════ */
+    #total-amount {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 500;
+      color: var(--color-primary);
+      letter-spacing: 0.02em;
+    }
+
+    /* ══ 导航栏标题：--font-body ══════════════════════ */
+    .nav-title {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      color: var(--color-text-primary);
+    }
+
+    /* ══ 清空按钮（文字按钮）══════════════════════════ */
+    #clear-btn {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--color-text-muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 8px 4px;
+      transition: color var(--duration-fast) ease;
+    }
+    #clear-btn:hover {
+      color: var(--color-danger);
+      text-decoration: underline;
+    }
+
+    /* ══ 底部结算栏 ════════════════════════════════════ */
+    .checkout-bar {
+      background-color: #FFFFFF;
+      border-top: 1px solid var(--color-border-light);
+      box-shadow: 0 -2px 12px rgba(44,35,32,0.06);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ── 顶部导航（sticky，毛玻璃）── -->
+  <div class="sticky top-0 z-20 nav-bar">
+    <div class="flex items-center px-5 h-14 gap-3">
+      <a href="index.html"
+         class="p-1.5 -ml-1.5 rounded"
+         style="color:var(--color-primary);"
+         aria-label="返回">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <span class="nav-title flex-1">购物车</span>
+      <button id="clear-btn">清空</button>
+    </div>
+  </div>
+
+  <!-- ── 主体内容区 ── -->
+  <main class="px-4 pt-3 pb-36">
+
+    <!-- 商品列表（由 cart.js 渲染）-->
+    <div id="cart-list"></div>
+
+    <!-- 空购物车状态 -->
+    <div id="empty-state" class="hidden flex flex-col items-center justify-center py-24">
+      <svg class="w-16 h-16 mb-4" style="color:var(--color-primary-light);opacity:0.45;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184
+             1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+      </svg>
+      <p class="text-sm mb-5" style="color:var(--color-text-muted);font-family:var(--font-body);">购物车是空的</p>
+      <a href="index.html" class="btn-primary text-sm px-6 py-2.5">去选购</a>
+    </div>
+
+  </main>
+
+  <!-- ── 底部结算栏（fixed）── -->
+  <div class="fixed bottom-0 left-0 right-0 z-10 checkout-bar">
+    <div class="flex items-center justify-between px-5 py-3">
+      <div class="flex flex-col">
+        <span class="text-xs" style="color:var(--color-text-muted);font-family:var(--font-body);letter-spacing:0.06em;">合计</span>
+        <span id="total-amount">¥0.00</span>
+      </div>
+      <button
+        id="checkout-btn"
+        class="btn-primary text-sm px-7 py-3 tracking-wider"
+        disabled
+      >去提交订单</button>
+    </div>
+    <!-- iPhone 底部安全区 -->
+    <div style="height: env(safe-area-inset-bottom, 0px);"></div>
+  </div>
+
+  <!-- ── Toast ── -->
+  <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-none"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/cart.js"></script>
+</body>
+</html>

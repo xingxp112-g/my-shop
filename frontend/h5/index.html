@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>美妆精选</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts（附录 B）-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/custom.css" />
+
+  <style>
+    /* ══ CSS 变量（附录 A）══════════════════════════════ */
+    :root {
+      --color-primary:        #C4845A;
+      --color-primary-light:  #D9A882;
+      --color-primary-dark:   #A8694A;
+      --color-primary-muted:  #F0D5C5;
+      --color-accent:         #E8C9A8;
+      --color-gold:           #BFA080;
+      --color-bg-base:        #FDFAF8;
+      --color-bg-warm:        #F5EDE8;
+      --color-bg-section:     #FAF6F3;
+      --color-bg-overlay:     rgba(196,132,90,0.06);
+      --color-text-primary:   #2C2320;
+      --color-text-secondary: #6B5E58;
+      --color-text-muted:     #A89690;
+      --color-text-on-primary:#FDFAF8;
+      --color-text-link:      #C4845A;
+      --color-border-light:   #EDE3DC;
+      --color-border-medium:  #D9CBBE;
+      --color-border-focus:   #C4845A;
+      --color-success:        #7BAF8A;
+      --color-success-bg:     #EEF5F0;
+      --color-warning:        #C9935A;
+      --color-warning-bg:     #FBF2EA;
+      --color-danger:         #B86A6A;
+      --color-danger-bg:      #F7EDED;
+      --color-info:           #7A9BB5;
+      --color-info-bg:        #EEF3F8;
+      --shadow-xs:  0 1px 2px rgba(44,35,32,0.05);
+      --shadow-sm:  0 2px 8px rgba(44,35,32,0.07);
+      --shadow-md:  0 4px 16px rgba(44,35,32,0.10);
+      --shadow-lg:  0 8px 32px rgba(44,35,32,0.12);
+      --shadow-nav: 0 1px 0 #EDE3DC;
+      --font-display: 'Cormorant Garamond', 'SimSun', serif;
+      --font-body:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      --duration-fast:   150ms;
+      --duration-normal: 250ms;
+      --duration-slow:   400ms;
+      --ease-out:        cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-in-out:     cubic-bezier(0.4, 0, 0.6, 1);
+      --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ══ 背景：多层渐变光晕 + 斜纹质感 ════════════════ */
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-bg-base);
+      color: var(--color-text-primary);
+      background-image:
+        radial-gradient(ellipse 78% 55% at 8% 4%,   rgba(222,174,142,0.22) 0%, transparent 52%),
+        radial-gradient(ellipse 52% 72% at 94% 98%,  rgba(196,132,90,0.15)  0%, transparent 52%),
+        radial-gradient(ellipse 42% 38% at 50% 46%,  rgba(255,252,249,0.52) 0%, transparent 62%),
+        repeating-linear-gradient(
+          -48deg,
+          transparent 0px, transparent 31px,
+          rgba(196,132,90,0.007) 31px, rgba(196,132,90,0.007) 32px
+        );
+    }
+
+    /* SVG fractalNoise 胶片纹理（极淡） */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.88' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      background-repeat: repeat;
+      opacity: 0.03;
+    }
+
+    /* ══ Logo 品牌名：--font-display，衬线轻奢 ════════ */
+    .logo-text {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.15rem;
+      letter-spacing: 0.15em;
+      color: var(--color-primary);
+    }
+
+    /* ══ 搜索框 ════════════════════════════════════════ */
+    #search-kw {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--color-text-primary);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--color-border-light);
+      border-radius: 4px;
+      box-shadow: var(--shadow-xs);
+      transition:
+        border-color var(--duration-normal) ease,
+        box-shadow var(--duration-normal) ease;
+    }
+    #search-kw:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 3px rgba(196,132,90,0.12);
+    }
+
+    /* ══ 卡片内品牌名：--font-display italic ══════════ */
+    #product-list .card .text-xs {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 0.72rem;
+      letter-spacing: 0.10em;
+      color: var(--color-text-secondary);
+    }
+
+    /* ══ 卡片内商品名：--font-body ════════════════════ */
+    #product-list .card .text-sm {
+      font-family: var(--font-body);
+      font-weight: 400;
+      color: var(--color-text-primary);
+    }
+
+    /* ══ 卡片内价格：--font-display，数字轻奢感 ══════ */
+    #product-list .card .text-base {
+      font-family: var(--font-display);
+      font-size: 1.18rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--color-primary);
+    }
+
+    /* ══ 商品卡片：fadeInUp 交错淡入（最多10档）══════ */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #product-list > div {
+      animation: fadeInUp 400ms var(--ease-out) both;
+    }
+    #product-list > div:nth-child(1)  { animation-delay:   0ms; }
+    #product-list > div:nth-child(2)  { animation-delay:  60ms; }
+    #product-list > div:nth-child(3)  { animation-delay: 120ms; }
+    #product-list > div:nth-child(4)  { animation-delay: 180ms; }
+    #product-list > div:nth-child(5)  { animation-delay: 240ms; }
+    #product-list > div:nth-child(6)  { animation-delay: 300ms; }
+    #product-list > div:nth-child(7)  { animation-delay: 360ms; }
+    #product-list > div:nth-child(8)  { animation-delay: 420ms; }
+    #product-list > div:nth-child(9)  { animation-delay: 480ms; }
+    #product-list > div:nth-child(10) { animation-delay: 540ms; }
+    #product-list > div:nth-child(n+11) { animation-delay: 600ms; }
+
+    /* ══ 图片容器：固定高度，强制裁切 ══════════════════ */
+    .card > .overflow-hidden {
+      height: 220px;
+      overflow: hidden;
+      width: 100%;
+      background-color: #FAF6F3;
+      position: relative;
+    }
+    .card > .overflow-hidden > .product-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center center;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    .card > .overflow-hidden > .product-img-placeholder {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ══ 卡片图片：hover 时微缩放 ═════════════════════ */
+    .card > .overflow-hidden > img,
+    .card > .overflow-hidden > div {
+      transition: transform 400ms var(--ease-out);
+    }
+    .card:hover > .overflow-hidden > img,
+    .card:hover > .overflow-hidden > div {
+      transform: scale(1.05);
+    }
+
+    /* ══ "+" 按钮：伪元素扩大触控热区到 44×44px ══════════ */
+    .add-btn {
+      position: relative;
+    }
+    .add-btn::before {
+      content: '';
+      position: absolute;
+      inset: -8px; /* 视觉 28px + 2×8px = 44px */
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ── 顶部导航（sticky，毛玻璃）── -->
+  <div class="sticky top-0 z-20 nav-bar">
+
+    <!-- 标题栏 -->
+    <div class="flex items-center justify-between px-5 h-14">
+      <span class="logo-text">美妆精选</span>
+      <a href="cart.html" class="relative p-2 -mr-1" aria-label="购物车">
+        <svg class="w-6 h-6" style="color:var(--color-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184
+               1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        <span
+          id="cart-badge"
+          class="hidden cart-badge absolute top-0.5 right-0.5"
+        >0</span>
+      </a>
+    </div>
+
+    <!-- 搜索栏 -->
+    <div class="px-5 pb-3">
+      <div class="relative max-w-[600px] mx-auto">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+          style="color:var(--color-primary);opacity:0.45;"
+          fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input
+          id="search-kw"
+          type="search"
+          placeholder="搜索商品名称..."
+          class="w-full pl-9 pr-4 py-2.5"
+        />
+      </div>
+    </div>
+
+    <!-- 搜索与标签区分割线 -->
+    <div style="height:1px;margin:0 20px;background:var(--color-border-light);opacity:0.7;"></div>
+
+    <!-- 标签横滚筛选 -->
+    <div id="tag-list" class="tag-scroll flex items-center gap-2 px-5 pt-2.5 pb-3 overflow-x-auto">
+      <button
+        class="tag-btn tag-btn-active flex-none"
+        data-tag-id=""
+        onclick="selectTag('', this)"
+      >全部</button>
+    </div>
+  </div>
+
+  <!-- ── 商品列表 ── -->
+  <main class="px-3 pt-3 pb-12">
+
+    <!-- 商品网格（2 列，骨架屏由 products.js 渲染）-->
+    <div id="product-list" class="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6">
+    </div>
+
+    <!-- 空态 -->
+    <div id="empty-state" class="hidden flex flex-col items-center justify-center py-24">
+      <svg class="w-14 h-14 mb-4" style="color:var(--color-primary-light);opacity:0.45;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+          d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <p class="text-sm" style="color:var(--color-text-muted);">暂无符合条件的商品</p>
+    </div>
+
+  </main>
+
+  <!-- ── Toast ── -->
+  <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-none"></div>
+
+  <!-- 购物车角标弹动触发器（MutationObserver 监听角标变化，添加 updated 类） -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var badge = document.getElementById('cart-badge');
+      if (!badge) return;
+      new MutationObserver(function () {
+        badge.classList.remove('updated');
+        void badge.offsetWidth; // 触发 reflow 重置动画
+        badge.classList.add('updated');
+      }).observe(badge, { childList: true, characterData: true, subtree: true });
+    });
+  </script>
+
+  <script src="js/api.js"></script>
+  <script src="js/products.js"></script>
+</body>
+</html>
