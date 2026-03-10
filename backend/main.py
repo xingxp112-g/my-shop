@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
-from app.routers import auth, brands, tags, products, orders, stats
+from app.routers import auth, brands, tags, products, orders, stats, vouchers
 
 app = FastAPI(title="美妆内部销售系统 API", version="1.0.0")
 
@@ -27,6 +27,7 @@ app.include_router(tags.router,     prefix="/api/tags",     tags=["标签"])
 app.include_router(products.router, prefix="/api/products", tags=["商品"])
 app.include_router(orders.router,   prefix="/api/orders",   tags=["订单"])
 app.include_router(stats.router,    prefix="/api/stats",    tags=["统计"])
+app.include_router(vouchers.router, prefix="/api/vouchers", tags=["代金券"])
 
 
 @app.get("/")

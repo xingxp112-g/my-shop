@@ -3,3 +3,4 @@ from app.models.brand import Brand
 from app.models.tag import Tag
 from app.models.product import Product, product_tag_table
 from app.models.order import Order, OrderItem
+from app.models.voucher import Voucher
