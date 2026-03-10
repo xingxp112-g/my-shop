@@ -7,5 +7,17 @@
       "Bash(python3:*)",
       "Bash(git:*)"
     ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session-logger.py"
+          }
+        ]
+      }
+    ]
   }
 }

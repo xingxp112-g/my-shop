@@ -14,10 +14,19 @@
 ```
 my-shop/
 ├── CLAUDE.md                        # 本文件
+├── README.md                        # 项目说明
+├── SERVER.md                        # 服务器部署配置说明
+├── API_HEALTH_CHECK_REPORT.md       # API 健康检查报告
+├── pic/                             # 截图/效果图目录
+├── scripts/
+│   └── check_api.py                 # API 健康检查脚本
 ├── backend/                         # 后端（Python + FastAPI）
 │   ├── main.py                      # 应用入口
 │   ├── requirements.txt             # 依赖列表
 │   ├── .env.example                 # 环境变量示例
+│   ├── .env                         # 实际环境变量（不提交 git）
+│   ├── uploads/                     # 图片上传存储目录
+│   ├── venv/                        # Python 虚拟环境（不提交 git）
 │   ├── app/
 │   │   ├── __init__.py
 │   │   ├── config.py                # 配置（数据库连接等）
@@ -54,16 +63,17 @@ my-shop/
 │       └── init.sql                 # 建表 SQL
 │
 └── frontend/                        # 前端（HTML + TailwindCSS + 原生 JS）
+    ├── design-system.md             # 前端设计系统规范文档
     ├── h5/                          # 前台 H5（客户端）
     │   ├── index.html               # 商品列表页
     │   ├── cart.html                # 购物车页
-    │   ├── checkout.html            # 提交订单页
+    │   ├── order.html               # 提交订单页
     │   ├── success.html             # 提交成功页
     │   ├── js/
     │   │   ├── api.js               # 封装 fetch 请求
     │   │   ├── products.js          # 商品列表逻辑
     │   │   ├── cart.js              # 购物车逻辑
-    │   │   └── checkout.js          # 提交订单逻辑
+    │   │   └── order.js             # 提交订单逻辑
     │   └── css/
     │       └── custom.css           # 自定义样式（补充 Tailwind）
     │
@@ -181,7 +191,7 @@ my-shop/
 
 > **状态：V1.0 开发完成**
 >
-> 最后更新：2026-03-03
+> 最后更新：2026-03-10
 
 ### 已完成（全部）
 - [x] 数据库建库建表（6 张表，含外键）
