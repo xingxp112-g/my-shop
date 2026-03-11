@@ -26,45 +26,48 @@ router = APIRouter()
 
 # ── 工具函数 ────────────────────────────────────────────────────────────────
 
-def _get_actual_status(v: Voucher) -> str:
-    if v.status == "used":
+_ALPHANUMERIC = string.ascii_uppercase + string.digits
+
+
+def _get_actual_status(voucher: Voucher) -> str:
+    if voucher.status == "used":
         return "used"
-    if v.end_date < date.today():
+    if voucher.end_date < date.today():
         return "expired"
     return "unused"
 
 
-def _to_voucher_out(v: Voucher) -> VoucherOut:
+def _to_voucher_out(voucher: Voucher) -> VoucherOut:
     return VoucherOut(
-        id=v.id,
-        code=v.code,
-        amount=v.amount,
-        start_date=v.start_date,
-        end_date=v.end_date,
-        status=_get_actual_status(v),
-        used_at=v.used_at,
-        used_by=v.used_by,
-        batch_no=v.batch_no,
-        created_at=v.created_at,
+        id=voucher.id,
+        code=voucher.code,
+        amount=voucher.amount,
+        start_date=voucher.start_date,
+        end_date=voucher.end_date,
+        status=_get_actual_status(voucher),
+        used_at=voucher.used_at,
+        used_by=voucher.used_by,
+        batch_no=voucher.batch_no,
+        created_at=voucher.created_at,
     )
 
 
 def _generate_code() -> str:
-    chars = string.ascii_uppercase + string.digits
-    return "".join(random.choices(chars, k=6))
+    return "".join(random.choices(_ALPHANUMERIC, k=6))
 
 
 def _generate_unique_codes(db: Session, count: int) -> list[str]:
     codes: set[str] = set()
-    max_attempts = count * 10
-    attempts = 0
-    while len(codes) < count and attempts < max_attempts:
-        attempts += 1
-        code = _generate_code()
-        if code in codes:
-            continue
-        if not db.query(Voucher).filter(Voucher.code == code).first():
-            codes.add(code)
+    for _ in range(10):
+        needed = count - len(codes)
+        if needed == 0:
+            break
+        candidates = {_generate_code() for _ in range(needed * 2)} - codes
+        existing = {
+            row[0]
+            for row in db.query(Voucher.code).filter(Voucher.code.in_(candidates)).all()
+        }
+        codes.update(list(candidates - existing)[:needed])
     if len(codes) < count:
         raise HTTPException(status_code=500, detail="券码生成失败，请重试")
     return list(codes)
@@ -72,7 +75,7 @@ def _generate_unique_codes(db: Session, count: int) -> list[str]:
 
 def _make_batch_no() -> str:
     today = datetime.now().strftime("%Y%m%d")
-    suffix = "".join(random.choices(string.ascii_uppercase + string.digits, k=4))
+    suffix = "".join(random.choices(_ALPHANUMERIC, k=4))
     return f"BATCH-{today}-{suffix}"
 
 
@@ -208,16 +211,16 @@ def export_vouchers(
     headers = ["券码", "面额（元）", "有效期开始", "有效期截止", "状态", "核销时间", "批次号"]
     ws.append(headers)
 
-    for v in items:
-        actual = _get_actual_status(v)
+    for voucher in items:
+        actual = _get_actual_status(voucher)
         ws.append([
-            v.code,
-            float(v.amount),
-            str(v.start_date),
-            str(v.end_date),
+            voucher.code,
+            float(voucher.amount),
+            str(voucher.start_date),
+            str(voucher.end_date),
             status_map.get(actual, actual),
-            v.used_at.strftime("%Y-%m-%d %H:%M:%S") if v.used_at else "",
-            v.batch_no or "",
+            voucher.used_at.strftime("%Y-%m-%d %H:%M:%S") if voucher.used_at else "",
+            voucher.batch_no or "",
         ])
 
     buf = io.BytesIO()
