@@ -5,7 +5,8 @@
       "Bash(python:*)",
       "Bash(curl:*)",
       "Bash(python3:*)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(gh auth:*)"
     ]
   },
   "hooks": {
