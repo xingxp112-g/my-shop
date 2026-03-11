@@ -9,3 +9,4 @@ frontend/h5/css/custom.css.map
 pic/
 backend/uploads/*
 !backend/uploads/.gitkeep
+.claude/session-log.md
