@@ -54,19 +54,22 @@ function updateCartBadge() {
 }
 
 /* ── 标签筛选 ───────────────────────────────────────── */
-let currentTagId = '';
+let currentTagId = '';        // 精确 tag_id（二级标签 or 无子级的一级标签）
+let currentParentTagId = '';  // 选中一级标签"全部"时使用
 
 async function loadTags() {
   try {
-    const tags = await api.get('/tags');
+    const tags = await api.get('/tags');  // 返回树形 [{id, name, children:[...]}]
     const container = document.getElementById('tag-list');
     tags.forEach(tag => {
+      const hasChildren = tag.children && tag.children.length > 0;
       const btn = document.createElement('button');
       btn.className = 'tag-btn flex-none px-4 py-1 text-xs transition-colors';
       btn.style.borderRadius = '4px';
       btn.dataset.tagId = String(tag.id);
-      btn.textContent = tag.name;
-      btn.addEventListener('click', () => selectTag(String(tag.id), btn));
+      btn.dataset.hasChildren = hasChildren ? '1' : '0';
+      btn.textContent = tag.name + (hasChildren ? ' ▾' : '');
+      btn.addEventListener('click', () => selectTag(String(tag.id), btn, tag.children || []));
       container.appendChild(btn);
     });
   } catch (e) {
@@ -74,10 +77,44 @@ async function loadTags() {
   }
 }
 
-function selectTag(tagId, btn) {
-  currentTagId = tagId;
-  document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('tag-btn-active'));
+function selectTag(tagId, btn, children) {
+  // 更新一级标签激活状态
+  document.querySelectorAll('#tag-list .tag-btn').forEach(b => b.classList.remove('tag-btn-active'));
   btn.classList.add('tag-btn-active');
+
+  const subRow = document.getElementById('sub-tag-row');
+
+  if (children && children.length > 0) {
+    // 渲染二级标签行
+    const allBtn = `<button class="tag-btn tag-btn-active flex-none px-4 py-1 text-xs" style="border-radius:4px;margin-top:8px;" onclick="selectSubTag('', ${tagId}, this)">全部</button>`;
+    const subBtns = children.map(c =>
+      `<button class="tag-btn flex-none px-4 py-1 text-xs" style="border-radius:4px;margin-top:8px;" onclick="selectSubTag('${c.id}', ${tagId}, this)">${c.name}</button>`
+    ).join('');
+    subRow.innerHTML = allBtn + subBtns;
+    subRow.classList.add('visible');
+    // 默认选"全部"
+    currentParentTagId = tagId;
+    currentTagId = '';
+  } else {
+    // 无子标签：直接筛选
+    subRow.classList.remove('visible');
+    subRow.innerHTML = '';
+    currentTagId = tagId;
+    currentParentTagId = '';
+  }
+  loadProducts();
+}
+
+function selectSubTag(subTagId, parentTagId, btn) {
+  document.querySelectorAll('#sub-tag-row .tag-btn').forEach(b => b.classList.remove('tag-btn-active'));
+  btn.classList.add('tag-btn-active');
+  if (subTagId) {
+    currentTagId = subTagId;
+    currentParentTagId = '';
+  } else {
+    currentTagId = '';
+    currentParentTagId = String(parentTagId);
+  }
   loadProducts();
 }
 
@@ -166,11 +203,10 @@ async function loadProducts() {
   empty.classList.add('hidden');
 
   try {
-    const products = await api.get('/products', {
-      status: 1,
-      keyword: keyword || undefined,
-      tag_id: currentTagId || undefined,
-    });
+    const params = { status: 1, keyword: keyword || undefined };
+    if (currentParentTagId) params.parent_tag_id = currentParentTagId;
+    else if (currentTagId)  params.tag_id = currentTagId;
+    const products = await api.get('/products', params);
 
     productsMap.clear();
     products.forEach(p => productsMap.set(p.id, p));

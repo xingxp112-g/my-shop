@@ -39,6 +39,7 @@ def _set_tags(product: Product, tag_ids: list[int], db: Session):
 def list_products(
     keyword: Optional[str] = None,
     tag_id: Optional[int] = None,
+    parent_tag_id: Optional[int] = None,
     status: Optional[int] = None,
     db: Session = Depends(get_db),
 ):
@@ -48,6 +49,10 @@ def list_products(
         q = q.filter(Product.name.like(f"%{keyword}%"))
     if tag_id is not None:
         q = q.filter(Product.tags.any(Tag.id == tag_id))
+    if parent_tag_id is not None:
+        child_ids = [t.id for t in db.query(Tag).filter(Tag.parent_id == parent_tag_id).all()]
+        all_ids = child_ids + [parent_tag_id]
+        q = q.filter(Product.tags.any(Tag.id.in_(all_ids)))
     if status is not None:
         q = q.filter(Product.status == status)
 
