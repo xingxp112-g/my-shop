@@ -249,6 +249,17 @@
       border: 1px solid var(--color-border-light);
     }
 
+    /* ── 标签分组标题 ── */
+    .tag-group-title {
+      width: 100%;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 10px 0 4px;
+    }
+
     /* ── 标签复选框 4.3 规范 ── */
     .tag-option {
       display: inline-flex;
@@ -470,20 +481,39 @@
     });
   }
 
-  // 加载标签复选框
+  // 加载标签复选框（树形分组）
   async function loadTags(selectedIds = []) {
-    const tags = await api.get('/tags');
+    const tags = await api.get('/tags');  // [{id, name, children:[...]}]
     const wrap = document.getElementById('tag-checkboxes');
     if (!tags.length) {
       wrap.innerHTML = '<span style="font-size:12px;color:var(--color-text-muted);">暂无标签，请先在标签管理中添加</span>';
       return;
     }
-    wrap.innerHTML = tags.map(t => `
-      <label class="tag-option">
-        <input type="checkbox" value="${t.id}" ${selectedIds.includes(t.id) ? 'checked' : ''} />
-        ${t.name}
-      </label>
-    `).join('');
+
+    const parts = [];
+    tags.forEach(t => {
+      if (t.children && t.children.length > 0) {
+        // 有子标签：渲染分组标题 + 子标签复选框
+        parts.push(`<div class="tag-group-title" data-group-id="${t.id}">${t.name}</div>`);
+        t.children.forEach(c => {
+          parts.push(`
+            <label class="tag-option" data-parent-group="${t.id}">
+              <input type="checkbox" value="${c.id}" ${selectedIds.includes(c.id) ? 'checked' : ''} />
+              ${c.name}
+            </label>
+          `);
+        });
+      } else {
+        // 无子标签：直接可勾选
+        parts.push(`
+          <label class="tag-option">
+            <input type="checkbox" value="${t.id}" ${selectedIds.includes(t.id) ? 'checked' : ''} />
+            ${t.name}
+          </label>
+        `);
+      }
+    });
+    wrap.innerHTML = parts.join('');
   }
 
   // 编辑模式：回填数据
@@ -548,6 +578,16 @@
     if (!name)     return showToast('请填写商品名称', 'error');
     if (!brand_id) return showToast('请选择品牌', 'error');
     if (!price)    return showToast('请填写价格', 'error');
+
+    // 校验：有子标签的分组至少需选一个
+    const groupTitles = document.querySelectorAll('#tag-checkboxes .tag-group-title');
+    for (const title of groupTitles) {
+      const groupId = title.dataset.groupId;
+      const checked = document.querySelectorAll(`#tag-checkboxes label[data-parent-group="${groupId}"] input:checked`);
+      if (!checked.length) {
+        return showToast(`请为「${title.textContent.trim()}」选择至少一个子标签`, 'error');
+      }
+    }
 
     const tag_ids = [...document.querySelectorAll('#tag-checkboxes input:checked')].map(el => Number(el.value));
     const image_url = uploadedImageUrl || document.getElementById('f-image-url').value || null;
