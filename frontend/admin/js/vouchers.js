@@ -32,7 +32,7 @@ function resetFilters() {
 
 async function loadVouchers() {
   const tbody = document.getElementById('voucher-list');
-  tbody.innerHTML = `<tr><td colspan="6" style="padding:32px 0;text-align:center;color:var(--color-text-muted);font-size:13px;">加载中...</td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="7" style="padding:32px 0;text-align:center;color:var(--color-text-muted);font-size:13px;">加载中...</td></tr>`;
 
   try {
     const params = {};
@@ -44,7 +44,7 @@ async function loadVouchers() {
     renderPagination(data.total, currentPage, PAGE_SIZE);
     document.getElementById('total-count').textContent = `共 ${data.total} 条`;
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" style="padding:48px 0;text-align:center;color:var(--color-danger);font-size:13px;">加载失败：${err.message}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="padding:48px 0;text-align:center;color:var(--color-danger);font-size:13px;">加载失败：${err.message}</td></tr>`;
   }
 }
 
@@ -52,7 +52,7 @@ function renderTable(items) {
   const tbody = document.getElementById('voucher-list');
   if (!items.length) {
     tbody.innerHTML = `
-      <tr><td colspan="6">
+      <tr><td colspan="7">
         <div class="empty-state">
           <svg class="empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -70,6 +70,7 @@ function renderTable(items) {
   tbody.innerHTML = items.map(v => {
     const dateRange = `${v.start_date} ~ ${v.end_date}`;
     const usedAt = v.used_at ? v.used_at.replace('T', ' ').slice(0, 16) : '—';
+    const usedBy = v.used_by || '—';
     const badge = `<span class="status-badge ${statusClass[v.status] || 'badge-neutral'}">${statusLabel[v.status] || v.status}</span>`;
     const action = v.status === 'unused'
       ? `<button onclick="openRedeemModal('${v.code}', '${v.amount}', '${v.end_date}')" class="btn-edit-text">核销</button>`
@@ -81,6 +82,7 @@ function renderTable(items) {
         <td style="font-size:12px;color:var(--color-text-secondary);">${dateRange}</td>
         <td>${badge}</td>
         <td style="font-size:12px;color:var(--color-text-secondary);">${usedAt}</td>
+        <td style="font-size:12px;color:var(--color-text-secondary);">${usedBy}</td>
         <td class="col-right">${action}</td>
       </tr>`;
   }).join('');
