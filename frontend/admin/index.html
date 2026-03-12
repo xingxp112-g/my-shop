@@ -203,8 +203,9 @@
       margin-top: 8px;
     }
     /* 卡片左侧装饰线 */
-    .stat-card-today { border-left: 3px solid var(--color-primary); }
-    .stat-card-month { border-left: 3px solid var(--color-accent); }
+    .stat-card-today    { border-left: 3px solid var(--color-primary); }
+    .stat-card-month    { border-left: 3px solid var(--color-accent); }
+    .stat-card-voucher  { border-left: 3px solid var(--color-info); }
 
     /* ── 快捷入口卡片 ── */
     .quick-card {
@@ -339,6 +340,29 @@
         </div>
       </div>
 
+      <!-- 代金券统计 -->
+      <div style="font-size: 11px; font-weight: 500; color: var(--color-text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px;">代金券概览</div>
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <!-- 总面额 -->
+        <div class="stat-card stat-card-voucher">
+          <div class="stat-label">代金券总面额</div>
+          <div id="voucher-total" class="stat-number skeleton" style="min-height: 40px; min-width: 100px; display: inline-block;">—</div>
+          <div class="stat-unit">元</div>
+        </div>
+        <!-- 已核销 -->
+        <div class="stat-card stat-card-voucher">
+          <div class="stat-label">已核销面额</div>
+          <div id="voucher-used" class="stat-number skeleton" style="min-height: 40px; min-width: 100px; display: inline-block;">—</div>
+          <div class="stat-unit">元</div>
+        </div>
+        <!-- 未核销 -->
+        <div class="stat-card stat-card-voucher">
+          <div class="stat-label">未核销面额（有效期内）</div>
+          <div id="voucher-unused" class="stat-number skeleton" style="min-height: 40px; min-width: 100px; display: inline-block;">—</div>
+          <div class="stat-unit">元</div>
+        </div>
+      </div>
+
       <!-- 快捷入口 -->
       <div class="quick-card">
         <div style="font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 16px;">快捷入口</div>
@@ -380,6 +404,11 @@
     year: 'numeric', month: 'long', day: 'numeric', weekday: 'short'
   });
 
+  // 金额格式化
+  function fmtAmount(v) {
+    return '¥ ' + Number(v).toLocaleString('zh-CN', {minimumFractionDigits: 2});
+  }
+
   // 移除骨架样式
   function clearSkeleton(id) {
     document.getElementById(id).classList.remove('skeleton');
@@ -391,11 +420,14 @@
   async function loadStats() {
     try {
       const d = await api.get('/stats');
-      document.getElementById('today-count').textContent  = d.today_order_count;
-      document.getElementById('today-amount').textContent = '¥ ' + Number(d.today_order_amount).toLocaleString('zh-CN', {minimumFractionDigits: 2});
-      document.getElementById('month-count').textContent  = d.month_order_count;
-      document.getElementById('month-amount').textContent = '¥ ' + Number(d.month_order_amount).toLocaleString('zh-CN', {minimumFractionDigits: 2});
-      ['today-count','today-amount','month-count','month-amount'].forEach(clearSkeleton);
+      document.getElementById('today-count').textContent   = d.today_order_count;
+      document.getElementById('today-amount').textContent  = fmtAmount(d.today_order_amount);
+      document.getElementById('month-count').textContent   = d.month_order_count;
+      document.getElementById('month-amount').textContent  = fmtAmount(d.month_order_amount);
+      document.getElementById('voucher-total').textContent  = fmtAmount(d.voucher_total_amount);
+      document.getElementById('voucher-used').textContent   = fmtAmount(d.voucher_used_amount);
+      document.getElementById('voucher-unused').textContent = fmtAmount(d.voucher_unused_amount);
+      ['today-count','today-amount','month-count','month-amount','voucher-total','voucher-used','voucher-unused'].forEach(clearSkeleton);
     } catch (err) {
       showToast(err.message, 'error');
     }
