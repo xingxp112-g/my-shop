@@ -579,16 +579,6 @@
     if (!brand_id) return showToast('请选择品牌', 'error');
     if (!price)    return showToast('请填写价格', 'error');
 
-    // 校验：有子标签的分组至少需选一个
-    const groupTitles = document.querySelectorAll('#tag-checkboxes .tag-group-title');
-    for (const title of groupTitles) {
-      const groupId = title.dataset.groupId;
-      const checked = document.querySelectorAll(`#tag-checkboxes label[data-parent-group="${groupId}"] input:checked`);
-      if (!checked.length) {
-        return showToast(`请为「${title.textContent.trim()}」选择至少一个子标签`, 'error');
-      }
-    }
-
     const tag_ids = [...document.querySelectorAll('#tag-checkboxes input:checked')].map(el => Number(el.value));
     const image_url = uploadedImageUrl || document.getElementById('f-image-url').value || null;
 
