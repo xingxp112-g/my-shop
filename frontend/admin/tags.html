@@ -322,6 +322,11 @@
     .td-name { color: var(--color-text-primary); font-size: 14px; font-weight: 500; }
     .td-hash { color: var(--color-text-muted); margin-right: 3px; }
 
+    /* ── 子标签行 ── */
+    .sub-row td { background: var(--color-bg-section); }
+    .sub-row .td-name { padding-left: 28px; font-weight: 400; color: var(--color-text-secondary); }
+    .sub-row .td-name::before { content: '└ '; color: var(--color-text-muted); }
+
     /* ── 空状态 ── */
     .empty-state {
       padding: 56px 0;
@@ -449,12 +454,13 @@
               <tr>
                 <th style="width: 64px;">ID</th>
                 <th>标签名称</th>
+                <th style="width: 72px; text-align:center;">子标签</th>
                 <th class="col-right">操作</th>
               </tr>
             </thead>
             <tbody id="tag-list">
               <tr>
-                <td colspan="3">
+                <td colspan="4">
                   <div class="empty-state">
                     <p class="empty-state-text">加载中...</p>
                   </div>
@@ -485,6 +491,18 @@
   </div>
 </div>
 
+<!-- ── 删除确认弹窗（二级标签有关联商品时）── -->
+<div id="confirm-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center" onclick="handleConfirmOverlayClick(event)">
+  <div class="modal-dialog" onclick="event.stopPropagation()">
+    <h3 class="modal-title">确认删除</h3>
+    <p id="confirm-msg" style="font-size:14px;color:var(--color-text-secondary);margin-bottom:24px;line-height:1.6;"></p>
+    <div class="modal-footer">
+      <button onclick="confirmDelete()" id="confirm-delete-btn" class="btn-primary" style="background:var(--color-danger);box-shadow:none;">确认删除</button>
+      <button onclick="closeConfirmModal()" class="btn-secondary">取消</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast" class="fixed bottom-6 right-6 z-50 hidden"></div>
 
@@ -495,15 +513,18 @@
   document.getElementById('sidebar-user').textContent = getAdminUser();
 
   let editingId = null;
+  let editingParentId = null;   // 新增子标签时使用
+  let pendingDeleteId = null;   // 待确认删除的子标签 id
 
+  // ── 加载标签列表 ──────────────────────────────────────
   async function loadTags() {
     const tbody = document.getElementById('tag-list');
     const cards = document.getElementById('tag-cards');
     try {
-      const tags = await api.get('/tags');
+      const tags = await api.get('/tags');   // 返回树形 [{id, name, children:[...]}]
       if (!tags.length) {
         tbody.innerHTML = `
-          <tr><td colspan="3">
+          <tr><td colspan="4">
             <div class="empty-state">
               <svg class="empty-state-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
               <p class="empty-state-text">暂无标签，点击右上角新增</p>
@@ -513,34 +534,82 @@
         return;
       }
 
-      // 卡片展示
+      // 卡片展示（只展示一级标签）
       cards.innerHTML = tags.map(t =>
         `<span class="tag-pill"><span class="tag-pill-hash">#</span>${t.name}</span>`
       ).join('');
 
-      // 表格
-      tbody.innerHTML = tags.map(t => `
-        <tr>
-          <td class="td-id">${t.id}</td>
-          <td class="td-name"><span class="td-hash">#</span>${t.name}</td>
-          <td class="col-right">
-            <div style="display:flex;justify-content:flex-end;align-items:center;gap:16px;">
-              <button onclick="openModal(${t.id}, '${t.name.replace(/'/g, "\\'")}')" class="btn-edit-text">编辑</button>
-              <button onclick="deleteTag(${t.id}, '${t.name.replace(/'/g, "\\'")}')" class="btn-danger-text">删除</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
+      // 表格：一级行 + 子标签行（默认隐藏）
+      const rows = [];
+      tags.forEach(t => {
+        const esc = s => s.replace(/'/g, "\\'");
+        const hasChildren = t.children && t.children.length > 0;
+
+        rows.push(`
+          <tr>
+            <td class="td-id">${t.id}</td>
+            <td class="td-name"><span class="td-hash">#</span>${t.name}</td>
+            <td style="text-align:center;color:var(--color-text-muted);font-size:12px;">${hasChildren ? t.children.length : '—'}</td>
+            <td class="col-right">
+              <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px;">
+                ${hasChildren ? `<button onclick="toggleSubRows(${t.id}, this)" class="btn-edit-text" style="min-width:42px;">展开▼</button>` : '<span style="min-width:42px;display:inline-block;"></span>'}
+                <button onclick="openModal(${t.id}, '${esc(t.name)}')" class="btn-edit-text">编辑</button>
+                <button onclick="openSubModal(${t.id}, '${esc(t.name)}')" class="btn-edit-text">+子标签</button>
+                <button onclick="deleteTag(${t.id}, '${esc(t.name)}', true)" class="btn-danger-text">删除</button>
+              </div>
+            </td>
+          </tr>`);
+
+        if (hasChildren) {
+          t.children.forEach(c => {
+            rows.push(`
+              <tr class="sub-row" data-parent="${t.id}" style="display:none;">
+                <td class="td-id">${c.id}</td>
+                <td class="td-name">${c.name}</td>
+                <td></td>
+                <td class="col-right">
+                  <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px;">
+                    <button onclick="openModal(${c.id}, '${esc(c.name)}')" class="btn-edit-text">编辑</button>
+                    <button onclick="deleteTag(${c.id}, '${esc(c.name)}', false)" class="btn-danger-text">删除</button>
+                  </div>
+                </td>
+              </tr>`);
+          });
+        }
+      });
+
+      tbody.innerHTML = rows.join('');
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="3" style="padding:48px 0;text-align:center;color:var(--color-danger);font-size:13px;">加载失败</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4" style="padding:48px 0;text-align:center;color:var(--color-danger);font-size:13px;">加载失败</td></tr>`;
       showToast(err.message, 'error');
     }
   }
 
+  // ── 展开/收起子标签行 ──────────────────────────────────
+  function toggleSubRows(parentId, btn) {
+    const rows = document.querySelectorAll(`tr.sub-row[data-parent="${parentId}"]`);
+    const isExpanded = btn.textContent.includes('▲');
+    rows.forEach(r => r.style.display = isExpanded ? 'none' : '');
+    btn.textContent = isExpanded ? '展开▼' : '收起▲';
+  }
+
+  // ── 弹窗：编辑/新增一级标签 ────────────────────────────
   function openModal(id = null, name = '') {
     editingId = id;
+    editingParentId = null;
     document.getElementById('modal-title').textContent = id ? '编辑标签' : '新增标签';
     document.getElementById('modal-input').value = name;
+    document.getElementById('modal').classList.remove('hidden');
+    document.body.classList.add('modal-open');
+    setTimeout(() => document.getElementById('modal-input').focus(), 50);
+  }
+
+  // ── 弹窗：新增子标签 ────────────────────────────────────
+  function openSubModal(parentId, parentName) {
+    editingId = null;
+    editingParentId = parentId;
+    document.getElementById('modal-title').textContent = `新增子标签 · ${parentName}`;
+    document.getElementById('modal-input').value = '';
     document.getElementById('modal').classList.remove('hidden');
     document.body.classList.add('modal-open');
     setTimeout(() => document.getElementById('modal-input').focus(), 50);
@@ -550,6 +619,7 @@
     document.getElementById('modal').classList.add('hidden');
     document.body.classList.remove('modal-open');
     editingId = null;
+    editingParentId = null;
   }
 
   function handleOverlayClick(e) {
@@ -569,7 +639,9 @@
         await api.put(`/tags/${editingId}`, { name });
         showToast('标签已更新');
       } else {
-        await api.post('/tags', { name });
+        const body = { name };
+        if (editingParentId) body.parent_id = editingParentId;
+        await api.post('/tags', body);
         showToast('标签已新增');
       }
       closeModal();
@@ -582,15 +654,65 @@
     }
   }
 
-  async function deleteTag(id, name) {
-    if (!confirm(`确认删除标签「${name}」？`)) return;
+  // ── 删除逻辑 ────────────────────────────────────────────
+  async function deleteTag(id, name, isParent) {
+    if (isParent) {
+      // 一级标签直接请求，后端有子标签时返回 400
+      if (!confirm(`确认删除标签「${name}」？`)) return;
+      try {
+        await api.del(`/tags/${id}`);
+        showToast('已删除');
+        loadTags();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    } else {
+      // 二级标签：先查商品数量
+      try {
+        const { count } = await api.get(`/tags/${id}/product-count`);
+        if (count > 0) {
+          // 弹确认框
+          pendingDeleteId = id;
+          document.getElementById('confirm-msg').textContent =
+            `标签「${name}」下有 ${count} 件商品将失去此标签，确认删除？`;
+          document.getElementById('confirm-modal').classList.remove('hidden');
+          document.body.classList.add('modal-open');
+        } else {
+          if (!confirm(`确认删除子标签「${name}」？`)) return;
+          await api.del(`/tags/${id}`);
+          showToast('已删除');
+          loadTags();
+        }
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+  }
+
+  async function confirmDelete() {
+    if (!pendingDeleteId) return;
+    const btn = document.getElementById('confirm-delete-btn');
+    btn.disabled = true;
     try {
-      await api.del(`/tags/${id}`);
+      await api.del(`/tags/${pendingDeleteId}`);
       showToast('已删除');
+      closeConfirmModal();
       loadTags();
     } catch (err) {
       showToast(err.message, 'error');
+    } finally {
+      btn.disabled = false;
     }
+  }
+
+  function closeConfirmModal() {
+    document.getElementById('confirm-modal').classList.add('hidden');
+    document.body.classList.remove('modal-open');
+    pendingDeleteId = null;
+  }
+
+  function handleConfirmOverlayClick(e) {
+    if (e.target === document.getElementById('confirm-modal')) closeConfirmModal();
   }
 
   loadTags();
