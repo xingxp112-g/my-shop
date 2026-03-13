@@ -39,5 +39,5 @@ git commit -m "生成的提交信息"
 告诉我提交完成，问是否需要 git push origin 当前分支。
 如果当前分支是 `dev`，推送后提醒：master 分支受保护，需在 GitHub 上提 PR 才能合并到 master。
 
-第六步：提交完成后，更新 CLAUDE.md 中的「CC 工具清单」
-如果本次提交新增或删除了 .claude/ 下的文件，提醒我同步更新 CLAUDE.md。
+第六步：提交完成后检查配置同步
+如果本次提交新增或删除了 .claude/ 下的文件（skill / command / agent / hook），提醒我同步更新 CLAUDE.md 中的目录结构部分。

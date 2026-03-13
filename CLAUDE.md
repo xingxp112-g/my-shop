@@ -22,10 +22,13 @@
 ```
 my-shop/
 ├── CLAUDE.md
-├── .claude/rules/          # 规范文档
-│   ├── git.md
-│   ├── backend.md
-│   └── frontend.md
+├── .claude/
+│   ├── rules/              # 规范文档（git / backend / frontend）
+│   ├── skills/             # 可调用 Skill（smart-commit / ship / github-cli / diagnose / review-page 等）
+│   ├── commands/           # 自定义斜杠命令（/diagnose / /review-page）
+│   ├── agents/             # 自定义 Agent（check-api）
+│   ├── hooks/              # 生命周期钩子（session-logger 等）
+│   └── session-log.md      # Claude 会话日志
 ├── backend/                # 后端（Python + FastAPI）
 │   ├── main.py
 │   ├── requirements.txt
@@ -48,8 +51,7 @@ my-shop/
     └── admin/              # 后台管理
 ```
 ## Environment
-- This is a Windows environment using PowerShell (NOT cmd/bash)
-- Always use PowerShell-compatible syntax for commands
+- Windows machine, but shell is **bash** (Git Bash / MSYS2) — use Unix syntax, NOT PowerShell
 - For Python scripts, force UTF-8 encoding（encoding='utf-8'）
 - Use ASCII-safe JSON output when terminal encoding is uncertain
 
