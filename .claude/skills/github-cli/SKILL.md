@@ -88,28 +88,30 @@ gh pr merge 1 --squash -d         # 合并后自动删除分支
 
 ### 场景四：本项目标准 Git 工作流
 
-结合项目的 dev/master 分支策略：
+本项目使用 dev → master 的发布策略，完整流程推荐直接使用 `/ship` skill（自动完成 commit → push → PR → merge → 同步）。
+
+手动操作参考：
 
 ```bash
-# Step 1：从 dev 切出功能分支
+# Step 1：在 dev 分支上开发
 git checkout dev
 git pull origin dev
-git checkout -b feat/xxx
+# ... 开发 ...
 
-# Step 2：开发完成，推送
-git add .
-git commit -m "feat: xxx"
-git push origin feat/xxx
+# Step 2：提交并推送
+git add <具体文件>
+git commit -m "type: 描述"
+git push origin dev
 
-# Step 3：创建 PR（feat/xxx → dev）
-gh pr create --base dev --fill
+# Step 3：创建 PR（dev → master）
+gh pr create --base master --head dev --title "release: 描述"
 
 # Step 4：合并 PR（管理员强制，个人项目）
-gh pr merge --admin --squash -d
+gh pr merge --admin --squash
 
-# Step 5：切回 dev，拉取最新
-git checkout dev
-git pull origin dev
+# Step 5：同步本地 master，重置 dev
+git checkout master && git pull origin master
+git checkout dev && git reset --hard origin/master
 ```
 
 ---

@@ -7,9 +7,20 @@
       "Bash(python3:*)",
       "Bash(git:*)",
       "Bash(gh auth:*)",
-      "Bash(gh pr:*)",
-      "Bash(cd \"/d/AiWorkSpace/my-shop\" && gh pr create --base master --head dev --title \"fix+feat: 修复标签验证 & 代金券列表增加核销人\" --body \"$\\(cat <<'EOF'\n## Summary\n- fix: 移除商品新建/编辑时要求每个标签分组都必须选择子标签的验证逻辑，标签现为完全可选\n- feat: 代金券列表新增「核销人」列，展示 used_by 字段（后端已有数据，仅补充前端展示）\n\n## Changes\n- `frontend/admin/products-form.html`: 删除标签分组强制验证 for 循环\n- `frontend/admin/vouchers.html`: 表头新增「核销人」列，colspan 6→7\n- `frontend/admin/js/vouchers.js`: renderTable 新增 used_by 显示，colspan 同步更新\n\n## Test plan\n- [ ] 新建商品时不选任何标签，确认可以正常提交\n- [ ] 只在部分分组选标签，确认可以正常提交\n- [ ] 代金券列表中已核销的券显示核销人姓名\n- [ ] 未核销的券核销人列显示「—」\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\nEOF\n\\)\")"
+      "Bash(gh pr:*)"
     ]
   },
-  "hooks": {}
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/session-logger.py"
+          }
+        ]
+      }
+    ]
+  }
 }
