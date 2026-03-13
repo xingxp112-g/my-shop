@@ -47,3 +47,17 @@ my-shop/
     ├── h5/                 # 前台 H5
     └── admin/              # 后台管理
 ```
+## Environment
+- This is a Windows environment using PowerShell (NOT cmd/bash)
+- Always use PowerShell-compatible syntax for commands
+- For Python scripts, force UTF-8 encoding（encoding='utf-8'）
+- Use ASCII-safe JSON output when terminal encoding is uncertain
+
+## Planning
+- When user says 'don't write code yet', do NOT proceed to implementation
+- Always confirm before moving from planning to implementation
+
+## Git Workflow
+- Always use gh CLI for PR creation and merging
+- When dev/master diverge, prefer git reset --hard over rebase
+- After merging PRs, do NOT use -d flag when worktrees exist
