@@ -187,6 +187,45 @@
       border-top: 1px solid var(--color-border-light);
       box-shadow: 0 -2px 12px rgba(44, 35, 32, 0.06);
     }
+
+    /* ══ 联系我们侧边栏（固定左侧）══════════════════════ */
+    .contact-sidebar {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px 6px;
+      background-color: rgba(253, 250, 248, 0.92);
+      border-right: 1px solid var(--color-border-light);
+      border-radius: 0 8px 8px 0;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .contact-sidebar .contact-label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      letter-spacing: 0.1em;
+      text-align: center;
+      writing-mode: vertical-rl;
+      margin: 0 auto 4px;
+    }
+
+    .contact-sidebar img {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid var(--color-border-light);
+      display: block;
+    }
   </style>
 </head>
 
@@ -237,6 +276,14 @@
     <!-- iPhone 底部安全区 -->
     <div style="height: env(safe-area-inset-bottom, 0px);"></div>
   </div>
+
+  <!-- ── 联系我们侧边栏（固定左侧）── -->
+  <aside class="contact-sidebar">
+    <span class="contact-label">联系我们</span>
+    <img src="resource/1.jpg" alt="联系方式 1" />
+    <img src="resource/2.jpg" alt="联系方式 2" />
+    <img src="resource/3.jpg" alt="联系方式 3" />
+  </aside>
 
   <!-- ── Toast ── -->
   <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-none"></div>
