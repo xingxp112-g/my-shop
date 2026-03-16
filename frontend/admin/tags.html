@@ -694,6 +694,8 @@
             <td style="text-align:center;color:var(--color-text-muted);font-size:12px;">${hasChildren ? t.children.length : '—'}</td>
             <td class="col-right">
               <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px;">
+                <button onclick="moveTag(${t.id}, 'up')" class="btn-edit-text" title="上移">↑</button>
+                <button onclick="moveTag(${t.id}, 'down')" class="btn-edit-text" title="下移">↓</button>
                 ${hasChildren ? `<button onclick="toggleSubRows(${t.id}, this)" class="btn-edit-text" style="min-width:42px;">展开▼</button>` : '<span style="min-width:42px;display:inline-block;"></span>'}
                 <button onclick="openModal(${t.id}, '${esc(t.name)}')" class="btn-edit-text">编辑</button>
                 <button onclick="openSubModal(${t.id}, '${esc(t.name)}')" class="btn-edit-text">+子标签</button>
@@ -711,6 +713,8 @@
                 <td></td>
                 <td class="col-right">
                   <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px;">
+                    <button onclick="moveTag(${c.id}, 'up')" class="btn-edit-text" title="上移">↑</button>
+                    <button onclick="moveTag(${c.id}, 'down')" class="btn-edit-text" title="下移">↓</button>
                     <button onclick="openModal(${c.id}, '${esc(c.name)}')" class="btn-edit-text">编辑</button>
                     <button onclick="deleteTag(${c.id}, '${esc(c.name)}', false)" class="btn-danger-text">删除</button>
                   </div>
@@ -855,6 +859,16 @@
 
     function handleConfirmOverlayClick(e) {
       if (e.target === document.getElementById('confirm-modal')) closeConfirmModal();
+    }
+
+    // ── 上移/下移标签 ───────────────────────────────────────
+    async function moveTag(id, direction) {
+      try {
+        await api.patch(`/tags/${id}/move`, { direction });
+        loadTags();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
     }
 
     loadTags();

@@ -12,10 +12,15 @@ class TagUpdate(BaseModel):
     name: str
 
 
+class MoveBody(BaseModel):
+    direction: str  # 'up' | 'down'
+
+
 class TagOut(BaseModel):
     id: int
     name: str
     parent_id: int | None = None
+    sort: int = 0
 
     model_config = {"from_attributes": True}
 

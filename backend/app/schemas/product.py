@@ -30,6 +30,12 @@ class ProductStatusUpdate(BaseModel):
     status: int  # 1=上架 0=下架
 
 
+class BatchTagBody(BaseModel):
+    product_ids: list[int]
+    tag_ids: list[int]
+    mode: str = 'add'  # 'add'=追加 | 'replace'=替换
+
+
 class ProductOut(BaseModel):
     id: int
     name: str
