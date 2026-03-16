@@ -17,8 +17,10 @@ CREATE TABLE IF NOT EXISTS tag (
     id        INT PRIMARY KEY AUTO_INCREMENT,
     name      VARCHAR(100) NOT NULL COMMENT '标签名称',
     parent_id INT NULL DEFAULT NULL COMMENT '父标签 id，NULL 表示一级标签',
+    sort      INT NOT NULL DEFAULT 0 COMMENT '排序值，越小越靠前',
     FOREIGN KEY (parent_id) REFERENCES tag (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- 已有数据库升级执行：ALTER TABLE tag ADD COLUMN sort INT NOT NULL DEFAULT 0 COMMENT '排序值，越小越靠前';
 
 -- 商品表
 CREATE TABLE IF NOT EXISTS product (

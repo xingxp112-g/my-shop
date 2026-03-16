@@ -59,7 +59,7 @@ let currentParentTagId = '';  // 选中一级标签"全部"时使用
 
 async function loadTags() {
   try {
-    const tags = await api.get('/tags');  // 返回树形 [{id, name, children:[...]}]
+    const tags = await api.get('/tags', { only_with_products: true });  // 只返回有上架商品的类目
     const container = document.getElementById('tag-list');
     tags.forEach(tag => {
       const hasChildren = tag.children && tag.children.length > 0;

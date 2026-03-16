@@ -405,6 +405,26 @@
     .action-btn.on-btn:hover {
       color: var(--color-success);
     }
+
+    /* ── 弹窗 ── */
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .modal-overlay { background: rgba(44,35,32,0.40); backdrop-filter: blur(2px); }
+    .modal-dialog {
+      background: #fff; border-radius: 8px; padding: 32px;
+      box-shadow: 0 16px 48px rgba(44,35,32,0.18);
+      max-width: 480px; width: calc(100% - 32px);
+      animation: modalIn 200ms ease-out both;
+    }
+    .modal-title { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 16px; }
+    .modal-footer { display: flex; gap: 12px; margin-top: 24px; }
+    .modal-footer .btn-primary, .modal-footer .btn-secondary { flex: 1; }
+    .tag-group-title { width: 100%; font-size: 11px; font-weight: 500; color: var(--color-text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin: 8px 0 4px; }
+    .tag-option { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--color-text-secondary); cursor: pointer; padding: 4px 8px; border: 1px solid var(--color-border-light); border-radius: 3px; transition: border-color .15s; }
+    .tag-option:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .tag-option input[type=checkbox]:checked + span, .tag-option:has(input:checked) { color: var(--color-primary); border-color: var(--color-primary); background: var(--color-primary-muted); }
   </style>
 </head>
 
@@ -478,12 +498,16 @@
       <!-- 顶栏 -->
       <header class="topbar">
         <h1 class="topbar-title">商品管理</h1>
-        <a href="products-form.html" class="btn-primary">
-          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          新增商品
-        </a>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span id="selection-info" style="display:none;font-size:13px;color:var(--color-text-secondary);">已选 <strong id="selection-count">0</strong> 项</span>
+          <button id="btn-batch-tag" onclick="openBatchTagModal()" class="btn-secondary" style="display:none;">批量打标</button>
+          <a href="products-form.html" class="btn-primary">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            新增商品
+          </a>
+        </div>
       </header>
 
       <!-- 过滤栏 -->
@@ -507,6 +531,9 @@
           <table>
             <thead>
               <tr>
+                <th style="width:36px;text-align:center;padding-left:16px;">
+                  <input type="checkbox" id="select-all" onchange="toggleSelectAll(this)" />
+                </th>
                 <th style="width: 64px;">图片</th>
                 <th>商品名称</th>
                 <th>品牌</th>
@@ -518,12 +545,28 @@
             </thead>
             <tbody id="product-table-body">
               <tr>
-                <td colspan="7" style="padding: 64px 0; text-align: center; color: var(--color-text-muted);">加载中...</td>
+                <td colspan="8" style="padding: 64px 0; text-align: center; color: var(--color-text-muted);">加载中...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </main>
+    </div>
+  </div>
+
+  <!-- ── 批量打标弹窗 ── -->
+  <div id="batch-tag-modal" class="modal-overlay fixed inset-0 z-50 hidden flex items-center justify-center"
+    onclick="if(event.target===this)closeBatchTagModal()">
+    <div class="modal-dialog" onclick="event.stopPropagation()">
+      <h3 class="modal-title">批量打标</h3>
+      <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px;">选择要追加的类目标签（不影响商品已有标签）</p>
+      <div id="batch-tag-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;max-height:240px;overflow-y:auto;">
+        <span style="font-size:13px;color:var(--color-text-muted);">加载中...</span>
+      </div>
+      <div class="modal-footer">
+        <button id="batch-tag-confirm-btn" onclick="executeBatchTag()" class="btn-primary">确认追加</button>
+        <button onclick="closeBatchTagModal()" class="btn-secondary">取消</button>
+      </div>
     </div>
   </div>
 
@@ -559,7 +602,7 @@
       const status = document.getElementById('filter-status').value;
 
       const tbody = document.getElementById('product-table-body');
-      tbody.innerHTML = `<tr><td colspan="7" style="padding: 64px 0; text-align: center; color: var(--color-text-muted);">加载中...</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" style="padding: 64px 0; text-align: center; color: var(--color-text-muted);">加载中...</td></tr>`;
 
       try {
         const products = await api.get('/products', {
@@ -569,7 +612,8 @@
         });
 
         if (!products.length) {
-          tbody.innerHTML = `<tr><td colspan="7" style="padding: 64px 0; text-align: center; color: var(--color-text-muted);">暂无商品</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="8" style="padding: 64px 0; text-align: center; color: var(--color-text-muted);">暂无商品</td></tr>`;
+          resetSelection();
           return;
         }
 
@@ -593,6 +637,7 @@
           const toggleClass = p.status === 1 ? 'action-btn' : 'action-btn on-btn';
 
           return `<tr>
+          <td style="text-align:center;padding-left:16px;"><input type="checkbox" class="row-checkbox" value="${p.id}" onchange="updateSelection()" /></td>
           <td>${imgEl}</td>
           <td>
             <div style="font-weight:500;color:var(--color-text-primary);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${p.name}</div>
@@ -610,9 +655,10 @@
           </td>
         </tr>`;
         }).join('');
+        resetSelection();
       } catch (err) {
         showToast(err.message, 'error');
-        tbody.innerHTML = `<tr><td colspan="7" style="padding: 64px 0; text-align: center; color: var(--color-danger);">加载失败</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" style="padding: 64px 0; text-align: center; color: var(--color-danger);">加载失败</td></tr>`;
       }
     }
 
@@ -623,6 +669,82 @@
         loadProducts();
       } catch (err) {
         showToast(err.message, 'error');
+      }
+    }
+
+    // ── 多选 & 批量打标 ─────────────────────────────────────
+    function toggleSelectAll(cb) {
+      document.querySelectorAll('.row-checkbox').forEach(el => el.checked = cb.checked);
+      updateSelection();
+    }
+
+    function updateSelection() {
+      const checked = document.querySelectorAll('.row-checkbox:checked');
+      const count = checked.length;
+      document.getElementById('selection-info').style.display = count ? '' : 'none';
+      document.getElementById('btn-batch-tag').style.display = count ? '' : 'none';
+      document.getElementById('selection-count').textContent = count;
+      const all = document.querySelectorAll('.row-checkbox');
+      const sa = document.getElementById('select-all');
+      if (sa) sa.checked = all.length > 0 && checked.length === all.length;
+    }
+
+    function resetSelection() {
+      document.querySelectorAll('.row-checkbox').forEach(el => el.checked = false);
+      const sa = document.getElementById('select-all');
+      if (sa) sa.checked = false;
+      updateSelection();
+    }
+
+    let _batchTagTree = [];
+
+    async function openBatchTagModal() {
+      const modal = document.getElementById('batch-tag-modal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      // 加载标签树
+      try {
+        _batchTagTree = await api.get('/tags');
+        const box = document.getElementById('batch-tag-checkboxes');
+        const parts = [];
+        _batchTagTree.forEach(t => {
+          if (t.children && t.children.length > 0) {
+            parts.push(`<div class="tag-group-title">${t.name}</div>`);
+            t.children.forEach(c => {
+              parts.push(`<label class="tag-option"><input type="checkbox" value="${c.id}" /><span>${c.name}</span></label>`);
+            });
+          } else {
+            parts.push(`<label class="tag-option"><input type="checkbox" value="${t.id}" /><span>${t.name}</span></label>`);
+          }
+        });
+        box.innerHTML = parts.join('');
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+
+    function closeBatchTagModal() {
+      document.getElementById('batch-tag-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    async function executeBatchTag() {
+      const product_ids = [...document.querySelectorAll('.row-checkbox:checked')].map(el => Number(el.value));
+      const tag_ids = [...document.querySelectorAll('#batch-tag-checkboxes input:checked')].map(el => Number(el.value));
+      if (!tag_ids.length) { showToast('请至少选择一个标签', 'error'); return; }
+      const btn = document.getElementById('batch-tag-confirm-btn');
+      btn.disabled = true;
+      btn.textContent = '处理中...';
+      try {
+        await api.post('/products/batch-tag', { product_ids, tag_ids, mode: 'add' });
+        showToast(`已为 ${product_ids.length} 件商品追加标签`);
+        closeBatchTagModal();
+        loadProducts();
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '确认追加';
       }
     }
 

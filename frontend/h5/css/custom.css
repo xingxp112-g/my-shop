@@ -343,3 +343,159 @@ select:focus {
 .btn-secondary:hover { background-color: var(--color-primary-muted); }
 .btn-secondary:active { background-color: var(--color-accent); }
 .btn-secondary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ─── 联系我们 Modal（共享）──────────────────────────── */
+@keyframes contactBackdropIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes contactBackdropOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes contactCardIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+@keyframes contactCardOut {
+  from { opacity: 1; transform: translateY(0)    scale(1);    }
+  to   { opacity: 0; transform: translateY(28px) scale(0.95); }
+}
+
+.contact-overlay {
+  /* 用显式 top/left/right/bottom 代替 inset，移动端兼容更好 */
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100%; height: 100%;
+  z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(44, 35, 32, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 24px 20px;
+  box-sizing: border-box;
+  animation: contactBackdropIn 200ms ease both;
+}
+.contact-overlay.contact-closing {
+  animation: contactBackdropOut 180ms ease both;
+}
+
+.contact-card {
+  background: var(--color-bg-base);
+  border-radius: 14px;
+  overflow: hidden;
+  width: min(340px, 100%);
+  /* 限制最大高度，防止超出屏幕；flex-col 让 gallery 弹性填充 */
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(44, 35, 32, 0.28);
+  animation: contactCardIn 300ms var(--ease-spring) both;
+}
+.contact-overlay.contact-closing .contact-card {
+  animation: contactCardOut 180ms ease both;
+}
+
+.contact-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--color-border-light);
+  background: linear-gradient(120deg, var(--color-bg-base) 55%, var(--color-bg-warm));
+  flex-shrink: 0;
+}
+.contact-card-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  color: var(--color-primary);
+}
+.contact-card-hint {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+.contact-close-btn {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--color-bg-warm);
+  border: 1px solid var(--color-border-light);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition:
+    background var(--duration-fast) ease,
+    color var(--duration-fast) ease,
+    transform var(--duration-fast) var(--ease-spring);
+}
+.contact-close-btn:hover {
+  background: var(--color-primary-muted);
+  color: var(--color-primary-dark);
+  transform: scale(1.1);
+}
+
+.contact-gallery-wrap {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-section);
+  /* 弹性填充剩余高度，min-height:0 防止 flex 子项溢出 */
+  flex: 1;
+  min-height: 0;
+}
+.contact-gallery-track {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+  transition: transform 350ms var(--ease-out);
+}
+.contact-gallery-track img {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  /* 用 vh 限高，确保不超出屏幕 */
+  max-height: 50vh;
+  object-fit: contain;
+  padding: 16px;
+  box-sizing: border-box;
+  display: block;
+}
+
+.contact-nav-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 34px; height: 34px;
+  background: rgba(253, 250, 248, 0.88);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid var(--color-border-light);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-sm);
+  transition:
+    background var(--duration-fast) ease,
+    transform var(--duration-fast) var(--ease-spring);
+}
+.contact-nav-btn:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.1);
+}
+.contact-nav-btn:disabled { opacity: 0.25; pointer-events: none; }
+.contact-nav-btn.prev { left: 10px; }
+.contact-nav-btn.next { right: 10px; }
+
+.contact-dots-row {
+  display: flex; justify-content: center; align-items: center; gap: 8px;
+  padding: 12px 0 14px;
+  flex-shrink: 0;
+}
+.contact-dot {
+  height: 6px; width: 6px;
+  border-radius: 3px;
+  background: var(--color-border-medium);
+  transition:
+    width var(--duration-normal) ease,
+    background var(--duration-normal) ease;
+}
+.contact-dot.active {
+  background: var(--color-primary);
+  width: 18px;
+}

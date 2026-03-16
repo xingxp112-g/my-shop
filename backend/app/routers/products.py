@@ -9,7 +9,7 @@ from app.config import settings
 from app.database import get_db
 from app.models.product import Product
 from app.models.tag import Tag
-from app.schemas.product import ProductCreate, ProductUpdate, ProductStatusUpdate, ProductOut
+from app.schemas.product import ProductCreate, ProductUpdate, ProductStatusUpdate, ProductOut, BatchTagBody
 from app.utils.auth import get_current_user
 
 router = APIRouter()
@@ -103,6 +103,31 @@ def update_product_status(
     product.status = body.status
     db.commit()
     return _get_product_or_404(product_id, db)
+
+
+@router.post("/batch-tag", status_code=status.HTTP_204_NO_CONTENT)
+def batch_tag_products(
+    body: BatchTagBody,
+    db: Session = Depends(get_db),
+    _: str = Depends(get_current_user),
+):
+    """批量为商品追加或替换标签"""
+    if not body.product_ids:
+        return
+    products = (
+        db.query(Product)
+        .options(joinedload(Product.tags))
+        .filter(Product.id.in_(body.product_ids))
+        .all()
+    )
+    new_tags = db.query(Tag).filter(Tag.id.in_(body.tag_ids)).all() if body.tag_ids else []
+    for product in products:
+        if body.mode == "replace":
+            product.tags = list(new_tags)
+        else:  # add — 追加，不重复
+            existing_ids = {t.id for t in product.tags}
+            product.tags = list(product.tags) + [t for t in new_tags if t.id not in existing_ids]
+    db.commit()
 
 
 @router.post("/upload-image", status_code=status.HTTP_200_OK)
