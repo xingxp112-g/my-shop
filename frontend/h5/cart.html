@@ -188,44 +188,7 @@
       box-shadow: 0 -2px 12px rgba(44, 35, 32, 0.06);
     }
 
-    /* ══ 联系我们侧边栏（固定左侧）══════════════════════ */
-    .contact-sidebar {
-      position: fixed;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 30;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding: 10px 6px;
-      background-color: rgba(253, 250, 248, 0.92);
-      border-right: 1px solid var(--color-border-light);
-      border-radius: 0 8px 8px 0;
-      box-shadow: var(--shadow-md);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-    }
-
-    .contact-sidebar .contact-label {
-      font-family: var(--font-body);
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--color-text-muted);
-      letter-spacing: 0.1em;
-      text-align: center;
-      writing-mode: vertical-rl;
-      margin: 0 auto 4px;
-    }
-
-    .contact-sidebar img {
-      width: 72px;
-      height: 72px;
-      object-fit: cover;
-      border-radius: 4px;
-      border: 1px solid var(--color-border-light);
-      display: block;
-    }
+    /* （联系我们 Modal 样式已合并至 custom.css）*/
   </style>
 </head>
 
@@ -240,6 +203,11 @@
         </svg>
       </a>
       <span class="nav-title flex-1">购物车</span>
+      <button onclick="openContact()" class="p-2 rounded" style="color:var(--color-primary);" aria-label="联系我们" title="联系我们">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+      </button>
       <button id="clear-btn">清空</button>
     </div>
   </div>
@@ -277,19 +245,112 @@
     <div style="height: env(safe-area-inset-bottom, 0px);"></div>
   </div>
 
-  <!-- ── 联系我们侧边栏（固定左侧）── -->
-  <aside class="contact-sidebar">
-    <span class="contact-label">联系我们</span>
-    <img src="resource/1.jpg" alt="联系方式 1" />
-    <img src="resource/2.jpg" alt="联系方式 2" />
-    <img src="resource/3.jpg" alt="联系方式 3" />
-  </aside>
-
   <!-- ── Toast ── -->
   <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-50 pointer-events-none"></div>
 
+  <!-- ── 联系我们 Modal ── -->
+  <div id="contact-modal" class="contact-overlay" style="display:none;" onclick="if(event.target===this)closeContact()">
+    <div class="contact-card">
+      <!-- 标题栏 -->
+      <div class="contact-card-header">
+        <div>
+          <div class="contact-card-title">Contact Us</div>
+          <div class="contact-card-hint">扫码联系 · 了解更多</div>
+        </div>
+        <button class="contact-close-btn" onclick="closeContact()" aria-label="关闭">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/>
+          </svg>
+        </button>
+      </div>
+      <!-- 图片 Gallery -->
+      <div class="contact-gallery-wrap" id="contact-gallery-wrap">
+        <div class="contact-gallery-track" id="contact-gallery-track">
+          <img src="resource/1.jpg" alt="联系方式" />
+          <img src="resource/2.jpg" alt="联系方式" />
+          <img src="resource/3.jpg" alt="联系方式" />
+        </div>
+        <button class="contact-nav-btn prev" id="contact-nav-prev" onclick="contactGalleryMove(-1)" aria-label="上一张">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <button class="contact-nav-btn next" id="contact-nav-next" onclick="contactGalleryMove(1)" aria-label="下一张">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+      <!-- 指示点 -->
+      <div class="contact-dots-row" id="contact-dots-row">
+        <span class="contact-dot active"></span>
+        <span class="contact-dot"></span>
+        <span class="contact-dot"></span>
+      </div>
+    </div>
+  </div>
+
   <script src="js/api.js"></script>
   <script src="js/cart.js"></script>
+  <script>
+    /* ── 联系我们 Modal ── */
+    (function () {
+      var _idx = 0, _TOTAL = 3, _swipeX = 0;
+
+      window.openContact = function () {
+        _idx = 0;
+        _render();
+        var el = document.getElementById('contact-modal');
+        el.classList.remove('contact-closing');
+        el.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        var wrap = document.getElementById('contact-gallery-wrap');
+        if (wrap && !wrap._swipeReady) {
+          wrap._swipeReady = true;
+          wrap.addEventListener('touchstart', function (e) { _swipeX = e.touches[0].clientX; }, { passive: true });
+          wrap.addEventListener('touchend', function (e) {
+            var dx = e.changedTouches[0].clientX - _swipeX;
+            if (Math.abs(dx) > 40) window.contactGalleryMove(dx < 0 ? 1 : -1);
+          }, { passive: true });
+        }
+      };
+
+      window.closeContact = function () {
+        var el = document.getElementById('contact-modal');
+        el.classList.add('contact-closing');
+        setTimeout(function () {
+          el.style.display = 'none';
+          el.classList.remove('contact-closing');
+          document.body.style.overflow = '';
+        }, 200);
+      };
+
+      window.contactGalleryMove = function (dir) {
+        _idx = Math.max(0, Math.min(_TOTAL - 1, _idx + dir));
+        _render();
+      };
+
+      function _render() {
+        var track = document.getElementById('contact-gallery-track');
+        if (track) track.style.transform = 'translateX(-' + (_idx * 100) + '%)';
+        document.querySelectorAll('#contact-dots-row .contact-dot').forEach(function (d, i) {
+          d.classList.toggle('active', i === _idx);
+        });
+        var prev = document.getElementById('contact-nav-prev');
+        var next = document.getElementById('contact-nav-next');
+        if (prev) prev.disabled = _idx === 0;
+        if (next) next.disabled = _idx === _TOTAL - 1;
+      }
+
+      document.addEventListener('keydown', function (e) {
+        var modal = document.getElementById('contact-modal');
+        if (!modal || modal.style.display === 'none') return;
+        if (e.key === 'Escape') window.closeContact();
+        else if (e.key === 'ArrowLeft')  window.contactGalleryMove(-1);
+        else if (e.key === 'ArrowRight') window.contactGalleryMove(1);
+      });
+    })();
+  </script>
 </body>
 
 </html>
