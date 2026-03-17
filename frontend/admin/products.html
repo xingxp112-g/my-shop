@@ -415,7 +415,8 @@
     .modal-dialog {
       background: #fff; border-radius: 8px; padding: 32px;
       box-shadow: 0 16px 48px rgba(44,35,32,0.18);
-      max-width: 480px; width: calc(100% - 32px);
+      max-width: 560px; width: calc(100% - 32px);
+      max-height: 80vh; overflow: hidden;
       animation: modalIn 200ms ease-out both;
     }
     .modal-title { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 16px; }
@@ -560,11 +561,12 @@
     <div class="modal-dialog" onclick="event.stopPropagation()">
       <h3 class="modal-title">批量打标</h3>
       <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:16px;">选择要追加的类目标签（不影响商品已有标签）</p>
-      <div id="batch-tag-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;max-height:240px;overflow-y:auto;">
+      <div id="batch-tag-checkboxes" style="display:flex;flex-wrap:wrap;gap:8px;max-height:300px;overflow-y:auto;">
         <span style="font-size:13px;color:var(--color-text-muted);">加载中...</span>
       </div>
       <div class="modal-footer">
-        <button id="batch-tag-confirm-btn" onclick="executeBatchTag()" class="btn-primary">确认追加</button>
+        <button id="batch-tag-confirm-btn" onclick="executeBatchTag('add')" class="btn-primary">确认追加</button>
+        <button id="batch-tag-replace-btn" onclick="executeBatchTag('replace')" class="btn-secondary">确认覆盖</button>
         <button onclick="closeBatchTagModal()" class="btn-secondary">取消</button>
       </div>
     </div>
@@ -728,23 +730,32 @@
       document.body.style.overflow = '';
     }
 
-    async function executeBatchTag() {
+    async function executeBatchTag(mode = 'add') {
       const product_ids = [...document.querySelectorAll('.row-checkbox:checked')].map(el => Number(el.value));
       const tag_ids = [...document.querySelectorAll('#batch-tag-checkboxes input:checked')].map(el => Number(el.value));
       if (!tag_ids.length) { showToast('请至少选择一个标签', 'error'); return; }
-      const btn = document.getElementById('batch-tag-confirm-btn');
-      btn.disabled = true;
-      btn.textContent = '处理中...';
+      const btnAdd = document.getElementById('batch-tag-confirm-btn');
+      const btnReplace = document.getElementById('batch-tag-replace-btn');
+      btnAdd.disabled = true;
+      btnReplace.disabled = true;
+      btnAdd.textContent = '处理中...';
+      btnReplace.textContent = '处理中...';
       try {
-        await api.post('/products/batch-tag', { product_ids, tag_ids, mode: 'add' });
-        showToast(`已为 ${product_ids.length} 件商品追加标签`);
+        await api.post('/products/batch-tag', { product_ids, tag_ids, mode });
+        showToast(
+          mode === 'replace'
+            ? `已为 ${product_ids.length} 件商品覆盖标签`
+            : `已为 ${product_ids.length} 件商品追加标签`
+        );
         closeBatchTagModal();
         loadProducts();
       } catch (err) {
         showToast(err.message, 'error');
       } finally {
-        btn.disabled = false;
-        btn.textContent = '确认追加';
+        btnAdd.disabled = false;
+        btnReplace.disabled = false;
+        btnAdd.textContent = '确认追加';
+        btnReplace.textContent = '明确覆盖';
       }
     }
 

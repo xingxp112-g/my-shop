@@ -121,12 +121,16 @@ def batch_tag_products(
         .all()
     )
     new_tags = db.query(Tag).filter(Tag.id.in_(body.tag_ids)).all() if body.tag_ids else []
+    mode = (body.mode or "add").strip().lower()
     for product in products:
-        if body.mode == "replace":
+        if mode == "replace":
             product.tags = list(new_tags)
-        else:  # add — 追加，不重复
+        else:  # add ?? ??????
             existing_ids = {t.id for t in product.tags}
-            product.tags = list(product.tags) + [t for t in new_tags if t.id not in existing_ids]
+            for tag in new_tags:
+                if tag.id not in existing_ids:
+                    product.tags.append(tag)
+                    existing_ids.add(tag.id)
     db.commit()
 
 
