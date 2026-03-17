@@ -1,8 +1,8 @@
-/* 前台 H5 自定义样式 — 轻奢美妆设计系统 v1.0 */
+﻿/* 鍓嶅彴 H5 鑷畾涔夋牱寮?鈥?杞诲ア缇庡璁捐绯荤粺 v1.0 */
 
-/* ─── CSS 自定义属性（附录 A）────────────────────────── */
+/* 鈹€鈹€鈹€ CSS 鑷畾涔夊睘鎬э紙闄勫綍 A锛夆攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 :root {
-  /* ── 主色 ── */
+  /* 鈹€鈹€ 涓昏壊 鈹€鈹€ */
   --color-primary:        #C4845A;
   --color-primary-light:  #D9A882;
   --color-primary-dark:   #A8694A;
@@ -10,25 +10,25 @@
   --color-accent:         #E8C9A8;
   --color-gold:           #BFA080;
 
-  /* ── 背景 ── */
+  /* 鈹€鈹€ 鑳屾櫙 鈹€鈹€ */
   --color-bg-base:        #FDFAF8;
   --color-bg-warm:        #F5EDE8;
   --color-bg-section:     #FAF6F3;
   --color-bg-overlay:     rgba(196,132,90,0.06);
 
-  /* ── 文字 ── */
+  /* 鈹€鈹€ 鏂囧瓧 鈹€鈹€ */
   --color-text-primary:   #2C2320;
   --color-text-secondary: #6B5E58;
   --color-text-muted:     #A89690;
   --color-text-on-primary:#FDFAF8;
   --color-text-link:      #C4845A;
 
-  /* ── 边框 ── */
+  /* 鈹€鈹€ 杈规 鈹€鈹€ */
   --color-border-light:   #EDE3DC;
   --color-border-medium:  #D9CBBE;
   --color-border-focus:   #C4845A;
 
-  /* ── 状态 ── */
+  /* 鈹€鈹€ 鐘舵€?鈹€鈹€ */
   --color-success:        #7BAF8A;
   --color-success-bg:     #EEF5F0;
   --color-warning:        #C9935A;
@@ -38,18 +38,18 @@
   --color-info:           #7A9BB5;
   --color-info-bg:        #EEF3F8;
 
-  /* ── 阴影 ── */
+  /* 鈹€鈹€ 闃村奖 鈹€鈹€ */
   --shadow-xs:  0 1px 2px rgba(44,35,32,0.05);
   --shadow-sm:  0 2px 8px rgba(44,35,32,0.07);
   --shadow-md:  0 4px 16px rgba(44,35,32,0.10);
   --shadow-lg:  0 8px 32px rgba(44,35,32,0.12);
   --shadow-nav: 0 1px 0 #EDE3DC;
 
-  /* ── 字体 ── */
+  /* 鈹€鈹€ 瀛椾綋 鈹€鈹€ */
   --font-display: 'Cormorant Garamond', 'SimSun', serif;
   --font-body:    'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 
-  /* ── 过渡 ── */
+  /* 鈹€鈹€ 杩囨浮 鈹€鈹€ */
   --duration-fast:   150ms;
   --duration-normal: 250ms;
   --duration-slow:   400ms;
@@ -58,7 +58,7 @@
   --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* ─── 全局字体与背景 ────────────────────────────────── */
+/* 鈹€鈹€鈹€ 鍏ㄥ眬瀛椾綋涓庤儗鏅?鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 body {
   font-family: var(--font-body);
   font-weight: 400;
@@ -66,34 +66,38 @@ body {
   background-color: var(--color-bg-base);
   color: var(--color-text-primary);
 }
+/* Modal 鎵撳紑鏃剁Щ闄?body 鐨?transform锛岄伩鍏?fixed 瀹氫綅鍙傜収寮傚父 */
+body.modal-open {
+  transform: none !important;
+}
 
-/* ─── 占位符颜色 ─────────────────────────────────────── */
+/* 鈹€鈹€鈹€ 鍗犱綅绗﹂鑹?鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 input::placeholder,
 textarea::placeholder {
   color: var(--color-text-muted);
   font-weight: 300;
 }
 
-/* ─── search 取消按钮隐藏 ────────────────────────────── */
+/* 鈹€鈹€鈹€ search 鍙栨秷鎸夐挳闅愯棌 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 input[type="search"]::-webkit-search-cancel-button { display: none; }
 
-/* ══════════════════════════════════════════════════════
-   动效 Keyframes
-   ══════════════════════════════════════════════════════ */
+/* 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲
+   鍔ㄦ晥 Keyframes
+   鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲 */
 
-/* 卡片交错淡入上浮 */
+/* 鍗＄墖浜ら敊娣″叆涓婃诞 */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* 页面进场：右侧滑入 */
+/* 椤甸潰杩涘満锛氬彸渚ф粦鍏?*/
 @keyframes pageEnter {
   from { opacity: 0; transform: translateX(16px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
-/* 购物车角标弹动 */
+/* 璐墿杞﹁鏍囧脊鍔?*/
 @keyframes badgePop {
   0%   { transform: scale(1); }
   40%  { transform: scale(1.4); }
@@ -101,28 +105,28 @@ input[type="search"]::-webkit-search-cancel-button { display: none; }
   100% { transform: scale(1); }
 }
 
-/* 图片懒加载模糊渐入 */
+/* 鍥剧墖鎳掑姞杞芥ā绯婃笎鍏?*/
 @keyframes imgReveal {
   from { opacity: 0; filter: blur(8px); transform: scale(1.03); }
   to   { opacity: 1; filter: blur(0);   transform: scale(1); }
 }
 
-/* 骨架屏 shimmer 扫光 */
+/* 楠ㄦ灦灞?shimmer 鎵厜 */
 @keyframes shimmer {
   0%   { background-position: -400px 0; }
   100% { background-position:  400px 0; }
 }
 
-/* ─── 页面进场动效 ────────────────────────────────────── */
+/* 鈹€鈹€鈹€ 椤甸潰杩涘満鍔ㄦ晥 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 body {
   animation: pageEnter 300ms var(--ease-out) both;
 }
 
-/* ─── Toast ────────────────────────────────────────────── */
+/* 鈹€鈹€鈹€ Toast 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 #toast { transition: opacity 0.25s ease, transform 0.25s ease; }
 #toast.show { opacity: 1 !important; transform: translateY(0) !important; }
 
-/* ─── 骨架屏 shimmer ──────────────────────────────────── */
+/* 鈹€鈹€鈹€ 楠ㄦ灦灞?shimmer 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .skeleton {
   background: linear-gradient(90deg, #F0E8E3 25%, #FAF6F3 50%, #F0E8E3 75%);
   background-size: 800px 100%;
@@ -130,16 +134,16 @@ body {
   border-radius: 4px;
 }
 
-/* ─── 图片加载动效 ────────────────────────────────────── */
+/* 鈹€鈹€鈹€ 鍥剧墖鍔犺浇鍔ㄦ晥 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .product-img.loaded {
   animation: imgReveal 400ms var(--ease-out) both;
 }
 
-/* ─── 标签横滚隐藏滚动条 ──────────────────────────────── */
+/* 鈹€鈹€鈹€ 鏍囩妯粴闅愯棌婊氬姩鏉?鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .tag-scroll::-webkit-scrollbar { display: none; }
 .tag-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ─── 标签按钮（4.3 规范）────────────────────────────── */
+/* 鈹€鈹€鈹€ 鏍囩鎸夐挳锛?.3 瑙勮寖锛夆攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .tag-btn {
   background-color: var(--color-primary-muted);
   color: var(--color-primary-dark);
@@ -162,7 +166,7 @@ body {
   color: var(--color-text-on-primary) !important;
 }
 
-/* ─── 多行截断 ────────────────────────────────────────── */
+/* 鈹€鈹€鈹€ 澶氳鎴柇 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -170,7 +174,7 @@ body {
   overflow: hidden;
 }
 
-/* ─── 加购按钮 ────────────────────────────────────────── */
+/* 鈹€鈹€鈹€ 鍔犺喘鎸夐挳 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .add-btn {
   background-color: var(--color-primary);
   color: var(--color-text-on-primary);
@@ -189,7 +193,7 @@ body {
   transform: scale(0.97);
 }
 
-/* ─── 商品卡片图片 ────────────────────────────────────── */
+/* 鈹€鈹€鈹€ 鍟嗗搧鍗＄墖鍥剧墖 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .product-img {
   width: 100%;
   aspect-ratio: 3 / 4;
@@ -205,7 +209,7 @@ body {
   justify-content: center;
 }
 
-/* ─── 输入框 focus 玫瑰金光晕（4.4 规范）────────────── */
+/* 鈹€鈹€鈹€ 杈撳叆妗?focus 鐜懓閲戝厜鏅曪紙4.4 瑙勮寖锛夆攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 input:focus,
 textarea:focus,
 select:focus {
@@ -217,7 +221,7 @@ select:focus {
     box-shadow var(--duration-normal) ease;
 }
 
-/* ─── 购物车角标（4.5 规范）──────────────────────────── */
+/* 鈹€鈹€鈹€ 璐墿杞﹁鏍囷紙4.5 瑙勮寖锛夆攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .cart-badge {
   min-width: 18px;
   height: 18px;
@@ -235,7 +239,7 @@ select:focus {
   animation: badgePop 300ms var(--ease-spring);
 }
 
-/* ─── 导航栏毛玻璃（4.5 规范）───────────────────────── */
+/* 鈹€鈹€鈹€ 瀵艰埅鏍忔瘺鐜荤拑锛?.5 瑙勮寖锛夆攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .nav-bar {
   background-color: rgba(253,250,248,0.92);
   backdrop-filter: blur(12px) saturate(180%);
@@ -244,7 +248,7 @@ select:focus {
   box-shadow: var(--shadow-nav);
 }
 
-/* ─── 卡片（4.2 规范）────────────────────────────────── */
+/* 鈹€鈹€鈹€ 鍗＄墖锛?.2 瑙勮寖锛夆攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .card {
   background: #FFFFFF;
   border-radius: 8px;
@@ -261,7 +265,7 @@ select:focus {
   border-color: var(--color-border-medium);
 }
 
-/* ─── 数量控制按钮 ────────────────────────────────────── */
+/* 鈹€鈹€鈹€ 鏁伴噺鎺у埗鎸夐挳 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .qty-btn {
   width: 28px;
   height: 28px;
@@ -287,7 +291,7 @@ select:focus {
   background-color: var(--color-bg-warm);
 }
 
-/* ─── 主按钮（4.1 规范）──────────────────────────────── */
+/* 鈹€鈹€鈹€ 涓绘寜閽紙4.1 瑙勮寖锛夆攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -324,7 +328,7 @@ select:focus {
   box-shadow: none;
 }
 
-/* ─── 次按钮（4.1 规范）──────────────────────────────── */
+/* 鈹€鈹€鈹€ 娆℃寜閽紙4.1 瑙勮寖锛夆攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 .btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -344,7 +348,7 @@ select:focus {
 .btn-secondary:active { background-color: var(--color-accent); }
 .btn-secondary:disabled { opacity: 0.45; cursor: not-allowed; }
 
-/* ─── 联系我们 Modal（共享）──────────────────────────── */
+/* 鈹€鈹€鈹€ 鑱旂郴鎴戜滑 Modal锛堝叡浜級鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 @keyframes contactBackdropIn  { from { opacity: 0; } to { opacity: 1; } }
 @keyframes contactBackdropOut { from { opacity: 1; } to { opacity: 0; } }
 @keyframes contactCardIn {
@@ -357,12 +361,13 @@ select:focus {
 }
 
 .contact-overlay {
-  /* 用显式 top/left/right/bottom 代替 inset，移动端兼容更好 */
+  /* 鐢ㄦ樉寮?top/left/right/bottom 浠ｆ浛 inset锛岀Щ鍔ㄧ鍏煎鏇村ソ */
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
   width: 100%; height: 100%;
   z-index: 100;
-  display: flex; align-items: center; justify-content: center;
+  display: none;
+  align-items: center; justify-content: center;
   background: rgba(44, 35, 32, 0.55);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -370,21 +375,31 @@ select:focus {
   box-sizing: border-box;
   animation: contactBackdropIn 200ms ease both;
 }
+.contact-overlay.is-open {
+  display: flex;
+}
 .contact-overlay.contact-closing {
   animation: contactBackdropOut 180ms ease both;
 }
 
 .contact-card {
-  background: var(--color-bg-base);
+  background: var(--color-bg-base, #fff);
+  color: var(--color-text-primary, #2C2320);
   border-radius: 14px;
   overflow: hidden;
   width: min(340px, 100%);
-  /* 限制最大高度，防止超出屏幕；flex-col 让 gallery 弹性填充 */
+  /* 闄愬埗鏈€澶ч珮搴︼紝闃叉瓒呭嚭灞忓箷锛沠lex-col 璁?gallery 寮规€у～鍏?*/
   max-height: calc(100vh - 48px);
+  opacity: 1;
+  transform: translateY(0);
   display: flex;
   flex-direction: column;
   box-shadow: 0 24px 64px rgba(44, 35, 32, 0.28);
   animation: contactCardIn 300ms var(--ease-spring) both;
+}
+.contact-overlay.is-open .contact-card {
+  opacity: 1;
+  transform: translateY(0);
 }
 .contact-overlay.contact-closing .contact-card {
   animation: contactCardOut 180ms ease both;
@@ -436,7 +451,7 @@ select:focus {
   position: relative;
   overflow: hidden;
   background: var(--color-bg-section);
-  /* 弹性填充剩余高度，min-height:0 防止 flex 子项溢出 */
+  /* 寮规€у～鍏呭墿浣欓珮搴︼紝min-height:0 闃叉 flex 瀛愰」婧㈠嚭 */
   flex: 1;
   min-height: 0;
 }
@@ -450,7 +465,7 @@ select:focus {
   flex-shrink: 0;
   width: 100%;
   height: 100%;
-  /* 用 vh 限高，确保不超出屏幕 */
+  /* 鐢?vh 闄愰珮锛岀‘淇濅笉瓒呭嚭灞忓箷 */
   max-height: 50vh;
   object-fit: contain;
   padding: 16px;
@@ -499,3 +514,220 @@ select:focus {
   background: var(--color-primary);
   width: 18px;
 }
+
+/* 鈹€鈹€鈹€ 鑱旂郴鎴戜滑寮圭獥锛氱Щ鍔ㄧ鑷€傚簲锛堝簳閮ㄥ脊鍑烘牱寮忥級鈹€鈹€鈹€鈹€鈹€鈹€ */
+@keyframes contactCardSlideUp {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes contactCardSlideDown {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(100%); }
+}
+
+@media (max-width: 640px) {
+  .contact-overlay {
+    /* 绉婚櫎 flex 灞呬腑渚濊禆锛岄伩鍏嶉珮搴﹂敊浣?*/
+    padding: 0;
+  }
+  .contact-overlay.is-open {
+    display: block;
+  }
+  .contact-card {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 150;
+    width: 100%;
+    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    max-height: 80vh;
+    min-height: 250px;
+    overflow-y: auto;
+    animation: contactCardSlideUp 300ms ease-out both;
+  }
+  .contact-overlay.contact-closing .contact-card {
+    animation: contactCardSlideDown 200ms ease-out both;
+  }
+  .contact-gallery-wrap {
+    min-height: 200px;
+  }
+  .contact-gallery-track img {
+    max-height: 45vh;
+    padding: 10px;
+  }
+  .contact-dots-row {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* 鈹€鈹€鈹€ 鑱旂郴鎴戜滑寮圭獥锛堟柊鐗堝浘绀哄竷灞€瑕嗙洊锛夆攢鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
+.contact-card {
+  position: relative;
+  background: #FFFFFF;
+  color: var(--color-text-primary, #2C2320);
+  border-radius: 18px;
+  width: min(680px, 100%);
+  max-height: calc(100vh - 32px);
+  padding: 22px 24px 20px;
+  box-shadow: 0 24px 64px rgba(44, 35, 32, 0.28);
+  overflow-y: auto;
+}
+.contact-close-btn {
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid var(--color-border-light);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-text-muted);
+  transition:
+    background var(--duration-fast) ease,
+    color var(--duration-fast) ease,
+    transform var(--duration-fast) var(--ease-spring);
+}
+.contact-close-btn:hover {
+  background: var(--color-primary-muted);
+  color: var(--color-primary-dark);
+  transform: scale(1.05);
+}
+.contact-title {
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  color: #1F1A18;
+  margin-top: 6px;
+}
+.contact-title span {
+  display: block;
+  font-size: 1.15rem;
+  margin-top: 6px;
+}
+.contact-qr-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.contact-qr-card {
+  background: #FFFFFF;
+  border: 1px solid #F2E6E0;
+  box-shadow: 0 10px 24px rgba(196, 132, 90, 0.10);
+  border-radius: 18px;
+  padding: 12px 12px 12px;
+  text-align: center;
+}
+.contact-qr-title {
+  color: #E97886;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.contact-qr-sub {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  margin-top: 2px;
+  letter-spacing: 0.06em;
+}
+.contact-qr-image {
+  margin: 8px auto 6px;
+  width: min(170px, 100%);
+}
+.contact-qr-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+.contact-qr-name {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.06em;
+}
+.contact-info {
+  margin-top: 14px;
+  text-align: center;
+  display: grid;
+  gap: 6px;
+}
+.contact-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #F5A9B3;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin: 6px auto 2px;
+}
+.contact-info-text {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-light);
+  background: #FFFFFF;
+  color: var(--color-primary);
+  box-shadow: var(--shadow-xs);
+  transition:
+    transform var(--duration-fast) var(--ease-spring),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+.contact-btn:hover {
+  background: var(--color-bg-section);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+.contact-btn span {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 640px) {
+  .contact-overlay {
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px 16px;
+  }
+  .contact-overlay.is-open { display: flex; }
+  .contact-card {
+    position: relative;
+    border-radius: 16px;
+    width: min(90vw, 500px);
+    max-height: calc(100vh - 40px);
+    padding: 12px 12px 12px;
+  }
+  .contact-title { font-size: 1.05rem; }
+  .contact-title span { font-size: 0.95rem; }
+  .contact-qr-grid { grid-template-columns: 1fr; }
+  .contact-qr-image { width: min(150px, 100%); }
+  .contact-qr-title { font-size: 0.85rem; }
+  .contact-qr-sub { font-size: 11px; }
+  .contact-qr-name { font-size: 0.82rem; }
+  .contact-qr-card { padding: 10px 10px 10px; }
+  .contact-qr-grid { gap: 10px; margin-top: 12px; }
+  .contact-info { margin-top: 10px; gap: 4px; }
+  .contact-pill { font-size: 11px; padding: 3px 10px; }
+  .contact-info-text { font-size: 12px; line-height: 1.5; }
+  .contact-btn span { display: none; }
+}
+
