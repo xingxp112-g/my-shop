@@ -12,3 +12,4 @@ backend/uploads/*
 .claude/session-log.md
 .claude/settings.json
 bash.exe.stackdump
+.gitconfig
