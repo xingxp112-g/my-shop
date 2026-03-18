@@ -8,7 +8,6 @@ from pydantic import BaseModel
 class OrderItemCreate(BaseModel):
     product_id: int
     quantity: int
-    price: Decimal
 
 
 class OrderCreate(BaseModel):

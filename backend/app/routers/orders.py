@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.database import get_db
 from app.models.order import Order, OrderItem
+from app.models.product import Product
 from app.schemas.order import OrderCreate, OrderStatusUpdate, OrderOut, OrderDetailOut
 from app.utils.auth import get_current_user
 
@@ -32,7 +33,15 @@ def create_order(body: OrderCreate, db: Session = Depends(get_db)):
     if not body.items:
         raise HTTPException(status_code=400, detail="订单商品不能为空")
 
-    total = sum(item.price * item.quantity for item in body.items)
+    product_ids = [item.product_id for item in body.items]
+    products = db.query(Product).filter(Product.id.in_(product_ids)).all()
+    db_price_map = {p.id: p.price for p in products if p.status == 1}
+
+    missing = [pid for pid in product_ids if pid not in db_price_map]
+    if missing:
+        raise HTTPException(status_code=400, detail=f"商品不存在或已下架：{missing}")
+
+    total = sum(db_price_map[item.product_id] * item.quantity for item in body.items)
     order = Order(
         customer_name=body.customer_name,
         phone=body.phone,
@@ -48,7 +57,7 @@ def create_order(body: OrderCreate, db: Session = Depends(get_db)):
             order_id=order.id,
             product_id=item.product_id,
             quantity=item.quantity,
-            price=item.price,
+            price=db_price_map[item.product_id],
         ))
 
     db.commit()

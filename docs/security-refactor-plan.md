@@ -30,7 +30,7 @@
 
 ### 阶段二：可并行执行的安全加固（任务 2、3、4 可同时进行）
 
-#### [ ] 任务 2：管理员密码改为 bcrypt 哈希（H-4）
+#### [x] 任务 2：管理员密码改为 bcrypt 哈希（H-4）
 
 - **文件**：`backend/app/config.py`、`backend/app/routers/auth.py`
 - **做什么**：
@@ -39,7 +39,7 @@
   3. 在 `.env.example`（若存在）或文档中说明如何生成新密码 hash
 - **风险**：`passlib[bcrypt]` 已在 requirements.txt，无依赖问题。注意 `.env` 文件中 `ADMIN_PASSWORD` 旧变量名要同步改为 `ADMIN_PASSWORD_HASH`，否则启动会用默认占位符
 
-#### [ ] 任务 3：订单价格后端验证（H-1）
+#### [x] 任务 3：订单价格后端验证（H-1）
 
 - **文件**：`backend/app/schemas/order.py`、`backend/app/routers/orders.py`
 - **做什么**：
