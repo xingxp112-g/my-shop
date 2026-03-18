@@ -10,17 +10,5 @@
       "Bash(gh pr:*)"
     ]
   },
-  "hooks": {
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python .claude/hooks/session-logger.py"
-          }
-        ]
-      }
-    ]
-  }
+  "hooks": {}
 }

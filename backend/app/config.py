@@ -10,7 +10,8 @@ class Settings(BaseSettings):
 
     APP_SECRET_KEY: str = "change-me"
     ADMIN_USERNAME: str = "admin"
-    ADMIN_PASSWORD: str = "admin123"
+    # 默认值为 admin123 的 bcrypt hash，生产环境请在 .env 中覆盖 ADMIN_PASSWORD_HASH
+    ADMIN_PASSWORD_HASH: str = "$2b$12$Rz7xO0w7Q2PPK/kFvsDsT.BhYAIdKe5aVCTnco.r.DTM1f8QxErjy"
 
     UPLOAD_DIR: str = "./uploads"
 
