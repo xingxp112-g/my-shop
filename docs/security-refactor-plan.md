@@ -48,7 +48,7 @@
   3. `total` 计算改为基于数据库价格：`total = sum(db_prices[item.product_id] * item.quantity for item in body.items)`
 - **风险**：前台 `order.html` 提交时携带了 `price` 字段（购物车快照），Schema 改动后后端会忽略该字段，需确认前端提交格式不会因此报验证错误（Pydantic 默认忽略额外字段，无问题）
 
-#### [ ] 任务 4：SECRET_KEY 启动检测 + 修复 CORS（H-2）
+#### [x] 任务 4：SECRET_KEY 启动检测 + 修复 CORS（H-2）
 
 - **文件**：`backend/app/config.py`、`backend/main.py`
 - **做什么**：
