@@ -15,7 +15,7 @@
 
 ### 阶段一：基础依赖替换（必须最先完成，后续任务依赖）
 
-#### [ ] 任务 1：替换 JWT 库（H-3）
+#### [x] 任务 1：替换 JWT 库（H-3）
 
 - **文件**：`backend/requirements.txt`、`backend/app/utils/auth.py`
 - **做什么**：

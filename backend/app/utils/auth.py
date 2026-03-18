@@ -2,7 +2,8 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from jose import jwt, JWTError
+import jwt
+from jwt.exceptions import InvalidTokenError
 
 from app.config import settings
 
@@ -26,5 +27,5 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(bearer_
         if not username:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="无效 token")
         return username
-    except JWTError:
+    except (InvalidTokenError, Exception):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="token 已过期或无效")
